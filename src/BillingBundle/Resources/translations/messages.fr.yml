@@ -1,0 +1,42 @@
+billing_bundle:
+  title_product_edit_add: "Ajouter/Modifier un produit"
+  title_sales_document_edit_add: 'Ajouter/Modifier un document'
+  title_sales_document_details: 'Détails'
+  title_sales_document_facultatif: 'Facultatif'
+
+
+sales_document_product:
+  label:
+      label: 'Libellé'
+      description: 'Description'
+      unitAmountHt: 'Montant Unitaire (HT)'
+      taxes: 'TVA'
+      duration: 'Durée'
+      reference: 'Référence'
+  placeholder:
+    label: ''
+    description: 'facultatif'
+    unitAmountHt: ''
+    taxes: '%'
+    duration: 'en minutes'
+    reference: 'facultatif'
+sales_document:
+  label:
+    client: 'Client'
+    state: 'Type'
+    comment: 'Commentaire'
+  placeholder:
+    client: '-- Choisir un client --'
+    comment: ''
+
+sales_document_detail:
+  label:
+    label: 'Libellé'
+    description:  'Description'
+    reference:  'Référence'
+    duration:  'Durée'
+  placeholder:
+    label: 'Libellé'
+    description:  'Description'
+    reference:  'Référence'
+    duration:  'Durée'

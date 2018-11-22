@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Customercommunications list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Customercommunicationtype</th>
+                <th>Value</th>
+                <th>Confirmed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for customerCommunication in customerCommunications %}
+            <tr>
+                <td><a href="{{ path('customercommunication_show', { 'id': customerCommunication.id }) }}">{{ customerCommunication.id }}</a></td>
+                <td>{{ customerCommunication.customerCommunicationType }}</td>
+                <td>{{ customerCommunication.value }}</td>
+                <td>{% if customerCommunication.confirmed %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('customercommunication_show', { 'id': customerCommunication.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('customercommunication_edit', { 'id': customerCommunication.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('customercommunication_new') }}">Create a new customerCommunication</a>
+        </li>
+    </ul>
+{% endblock %}

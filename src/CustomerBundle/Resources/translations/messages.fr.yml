@@ -1,0 +1,80 @@
+customer_bundle:
+
+  #views
+  title_index: 'Contacts'
+  title_edit_add: 'Ajout/Modification de contact'
+  edit_add: 'Enregistrer'
+
+  #forms
+  forms:
+    customer:
+      label:
+        customerType: 'Type'
+        firstName: 'Prénom'
+        lastName: 'Nom'
+        companyName: 'Nom Entreprise'
+        siren: 'SIREN'
+        siret: 'SIRET'
+        comment: 'Commentaire'
+        birthday: 'Anniversaire'
+        id: 'Num. client'
+      placeholder:
+        customerType: '-- Choisir --'
+        firstName: ''
+        lastName: ''
+        companyName: ''
+        siren: ''
+        siret: ''
+        comment: ''
+        birthday: ''
+    customer_communication:
+      label:
+        value: 'Valeur'
+        customerCommunicationType : 'Type'
+      placeholder:
+        value: ''
+        customerCommunicationType: '-- Choisir --'
+    customer_address:
+      label:
+        customerAddressType: 'Type'
+        ligne1: 'Adresse 1'
+        ligne2: 'Adresse 2'
+        ligne3: 'Adresse 3'
+        codePostal: 'Code postal'
+        ville: 'Ville'
+        pays: 'Pays'
+      placeholder:
+        customerAddressType: 'Type'
+        ligne1: 'Adresse 1'
+        ligne2: 'Adresse 2'
+        ligne3: 'Adresse 3'
+        codePostal: 'Code postal'
+        ville: 'Ville'
+        pays: 'Pays'
+  title_communications: 'Contact'
+  title_communications_edit_add: 'Contact'
+  title_adresses_edit_add: 'Adresse'
+  success_edit_add: 'Le contact a bien été ajouté'
+  action: 'Action'
+  title_customers: 'Contacts'
+  edit_add_link: 'Nouveau'
+#enums
+ecustomer:
+  suspect: 'Suspect'
+  prospect: 'Prospect'
+  client: 'Client'
+  undefined: 'Autre'
+ecustomercommunication:
+  email: 'Adresse mail'
+  telephone: 'Téléphone'
+  mobile: 'Portable'
+  fax: 'Fax'
+  website: 'Site Web'
+  skype: 'Skype'
+  facebook: 'Facebook'
+  undefined: 'Autre'
+ecustomeraddress:
+  base: 'Base'
+  billing: 'Facturation'
+  delivery: 'Livraison'
+  undefined: 'Autre'

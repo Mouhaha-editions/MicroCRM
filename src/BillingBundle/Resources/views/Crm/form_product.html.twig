@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        {{ form_start(form) }}
+        <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}{{ 'billing_bundle.title_product_edit_add'|trans }}{% endblock %}
+                {% block panel_body %}
+                    {{ form_row(form.reference) }}
+                    {{ form_row(form.label) }}
+                    {{ form_row(form.description) }}
+                {% endblock %}
+                {% block panel_footer %}
+                    {{ form_row(form.Enregistrer) }}
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}Quelques chiffre{% endblock %}
+                {% block panel_body %}
+                    {{ form_row(form.duration) }}
+                    {{ form_row(form.unitAmountHt) }}
+                    {{ form_row(form.taxes) }}
+                {% endblock %}
+            {% endembed %}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

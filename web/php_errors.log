@@ -1,0 +1,1 @@
+[15-Nov-2018 22:38:19 Europe/Paris] PHP Fatal error:  Cannot redeclare BillingBundle\Entity\SalesDocument::removeDetail() in F:\var\www\dev_project\src\BillingBundle\Entity\SalesDocument.php on line 254

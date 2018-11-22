@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Customercommunication</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ customerCommunication.id }}</td>
+            </tr>
+            <tr>
+                <th>Customercommunicationtype</th>
+                <td>{{ customerCommunication.customerCommunicationType }}</td>
+            </tr>
+            <tr>
+                <th>Value</th>
+                <td>{{ customerCommunication.value }}</td>
+            </tr>
+            <tr>
+                <th>Confirmed</th>
+                <td>{% if customerCommunication.confirmed %}Yes{% else %}No{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('customercommunication_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('customercommunication_edit', { 'id': customerCommunication.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{%  import "@Pagination/Pagination/macro.twig" as macro_page %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    {{ 'customer_bundle.title_index'|trans }}
+                    <a class="pull-right"
+                       href="{{ url('customer_new') }}">+ {{ 'customer_bundle.edit_add_link'|trans }}</a>
+                {% endblock %}
+                {% block panel_body %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>{{ 'customer_bundle.forms.customer.label.id'|trans }}</th>
+                            <th>{{ 'customer_bundle.forms.customer.label.customerType'|trans }}</th>
+                            <th>{{ 'customer_bundle.forms.customer.label.lastName'|trans }}</th>
+                            <th>{{ 'customer_bundle.forms.customer.label.comment'|trans }}</th>
+                            <th>{{ 'customer_bundle.action'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for customer in customers.entities %}
+                            <tr>
+                                <td><a href="{{ path('customer_edit', { 'id': customer.id }) }}">{{ customer.id }}</a>
+                                </td>
+                                <td>{{ customer.customerTypeStr|trans }}</td>
+                                <td>{{ customer.fullName }}</td>
+                                <td>{{ customer.comment }}</td>
+                                <td>
+                                    <a class="btn btn-sm btn-info"
+                                       href="{{ path('customer_edit', { 'id': customer.id }) }}"><i
+                                                class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table><br/>
+                {% endblock %}
+            {% endembed %}
+            page : {{ macro_page.paginate(customers) }}
+        </div>
+    </div>
+
+
+{% endblock %}

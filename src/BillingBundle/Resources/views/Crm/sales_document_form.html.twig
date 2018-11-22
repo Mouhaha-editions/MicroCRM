@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}{{ 'billing_bundle.title_sales_document_edit_add'|trans }}{% endblock %}
+                {% block panel_body %}
+
+                    {{ form_row(form.customer) }}
+                    {{ form_row(form.state) }}
+
+                {% endblock %}
+
+                {% block panel_footer %}
+                    {{ form_widget(form.Enregistrer) }}
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}{{ 'billing_bundle.title_sales_document_facultatif'|trans }}{% endblock %}
+                {% block panel_body %}
+                    {{ form_row(form.comment) }}
+                {% endblock %}
+
+                {% block panel_footer %}
+                    {{ form_widget(form.Enregistrer) }}
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    {{ 'billing_bundle.title_sales_document_details'|trans }}
+                    <a href="#" data-copy-form=".table-prototype" data-before="tr:last" class="pull-right" id="addLine">+
+                        Ajouter une
+                        ligne</a>
+                {% endblock %}
+                {% block panel_body %}
+                    <table class="table table-prototype"
+                           data-prototype="{%- filter escape -%}{{ include('@Billing/Crm/prototypes/details.html.twig', { 'form': form.details.vars.prototype }) }}{%- endfilter -%}">
+                        <tr>
+                            <th></th>
+                            <th style="">Ref.</th>
+                            <th style="width:30%">Label / Description</th>
+                            <th>Durée / Date
+                                <small>(facultatif)</small>
+                            </th>
+                            <th>Prix unitaire HT(&euro;) / TVA(%)</th>
+                            <th>Quantité</th>
+                            <th>Total TTC(&euro;)</th>
+                            {#<th></th>#}
+                        </tr>
+                        {% for detail in form.details %}
+                            {{ include('@Billing/Crm/prototypes/details.html.twig', {form: detail}) }}
+                        {% endfor %}
+
+                        <tr>
+                            <th colspan="4" style="text-align:right">Total</th>
+                            <th class="totalQuantity"></th>
+                            <th colspan='2' class="totalTTC text-right"></th>
+                        </tr>
+                    </table>
+
+                {% endblock %}
+
+                {% block panel_footer %}
+                    <button type="submit" class="btn btn-default" name="">Enregistrer</button>
+                {% endblock %}
+            {% endembed %}
+
+
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var updateTotal = function (t) {
+            var line = getFamily(t);
+            line.obj.totalAmountTtc.val((line.val.unitAmountHt * line.val.quantity * (1 + line.val.taxes / 100)).toFixed(2));
+            line.obj.totalAmountTtc.trigger('change');
+        };
+
+        var getFamily = function (t) {
+            var tr = t.parent().parent();
+            return {
+                obj: {
+                    reference: tr.find('input.form_reference'),
+                    duration: tr.find('input.form_duration'),
+                    label: tr.find('input.form_label'),
+                    description: tr.find('input.form_description'),
+                    unitAmountHt: tr.find('input.form_unitAmountHt'),
+                    quantity: tr.find('input.form_quantity'),
+                    taxes: tr.find('input.form_taxes'),
+                    totalAmountTtc: tr.find('input.form_totalAmountTtc')
+                },
+                val: {
+                    label: tr.find('input.form_label').val(),
+                    reference: tr.find('input.form_reference').val(),
+                    duration: tr.find('input.form_duration').val(),
+                    description: tr.find('input.form_description').val(),
+                    unitAmountHt: parseFloat(tr.find('input.form_unitAmountHt').val()).toFixed(2),
+                    quantity: parseFloat(tr.find('input.form_quantity').val()).toFixed(2),
+                    taxes: parseFloat(tr.find('input.form_taxes').val()).toFixed(2),
+                    totalAmountTtc: parseFloat(tr.find('input.form_totalAmountTtc').val()).toFixed(2)
+
+                }
+            };
+        };
+        $(function () {
+
+
+            $(document).on('change', '.form_totalAmountTtc ', function () {
+                let total = 0;
+                let totalQt = 0;
+                $('.form_totalAmountTtc').each(function () {
+                    total += parseFloat($(this).val());
+                });
+                $('.form_quantity').each(function () {
+                    totalQt += parseFloat($(this).val());
+                });
+
+                $('.totalTTC').html(total.toFixed(2) + " &euro;");
+                $('.totalQuantity').html(totalQt);
+            });
+            $('.form_totalAmountTtc ').trigger('change');
+            $(document).on('keyup', '.form_unitAmountHt', function () {
+                line = getFamily($(this));
+                if (line.val.quantity === 0 && parseInt($(this).val()) !== 0) {
+                    line.obj.quantity.val(1);
+                }
+            });
+            $(document).on('keyup', '.form_unitAmountHt, .form_quantity, .form_taxes, .form_totalAmountTtc ', function () {
+                updateTotal($(this));
+            });
+            var products = [];
+            var simple_products = [];
+            {% for product in products %}
+            simple_products.push('{{ product.label }} - {{ product.unitAmountHt }}€');
+            products.push({
+                reference: '{{ product.reference }}',
+                duration: '{{ product.duration }}',
+                label: '{{ product.label }}',
+                description: '{{ product.description }}',
+                unitAmountHt: '{{ product.unitAmountHt }}',
+                taxes: '{{ product.taxes }}'
+            });
+            {% endfor %}
+
+            $(document).on('click', "i.add-product", function () {
+                var t = $(this);
+                var tr = t.closest('tr');
+                var reference = tr.find(".form_reference");
+                var duration = tr.find(".form_duration");
+                var label = tr.find(".form_label");
+                var description = tr.find(".form_description");
+                var quantity = tr.find(".form_quantity");
+                var unitAmountHt = tr.find(".form_unitAmountHt");
+                var taxes = tr.find(".form_taxes");
+                swal({
+                    title: "Séléctionner un produit",
+                    input: 'select',
+                    inputOptions: simple_products,
+                    showCancelButton: true,
+
+                }).then((result) => {
+                    if (result.value !== undefined) {
+                        product = products[result.value];
+                        reference.val(product.reference);
+                        duration.val(product.duration);
+                        label.val(product.label);
+                        description.val(product.description);
+                        unitAmountHt.val(product.unitAmountHt);
+                        taxes.val(product.taxes);
+                        quantity.val(1);
+                        unitAmountHt.trigger('keyup');
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,14 @@
+<tr>
+    <td style="vertical-align: middle"><a href="#" title="Selectionner un produit"><i
+                    class="fa fa-cubes fa-2x add-product"></i></a></td>
+    <td>{{ form_widget(form.reference) }}</td>
+    <td>{{ form_widget(form.label) }}{{ form_widget(form.description) }}</td>
+    <td>{{ form_widget(form.duration) }} min<br/>
+        {{ form_widget(form.date) }}</td>
+    <td>{{ form_widget(form.unitAmountHt) }}
+        {{ form_widget(form.taxes) }}</td>
+    <td>{{ form_widget(form.quantity) }}</td>
+    <td>{{ form_widget(form.totalAmountTtc) }}</td>
+    <td style="vertical-align: middle"><a href="#" class="text-danger removeLine" data-delete-form="true" data-closest="tr" title="Retirer cette ligne"><i
+                class="fa fa-minus "></i></a></td>
+</tr>

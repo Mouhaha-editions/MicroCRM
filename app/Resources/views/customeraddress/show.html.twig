@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Customeraddress</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ customerAddress.id }}</td>
+            </tr>
+            <tr>
+                <th>Customeradressetype</th>
+                <td>{{ customerAddress.customerAdresseType }}</td>
+            </tr>
+            <tr>
+                <th>Ligne1</th>
+                <td>{{ customerAddress.ligne1 }}</td>
+            </tr>
+            <tr>
+                <th>Ligne2</th>
+                <td>{{ customerAddress.ligne2 }}</td>
+            </tr>
+            <tr>
+                <th>Ligne3</th>
+                <td>{{ customerAddress.ligne3 }}</td>
+            </tr>
+            <tr>
+                <th>Codepostal</th>
+                <td>{{ customerAddress.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ customerAddress.ville }}</td>
+            </tr>
+            <tr>
+                <th>Pays</th>
+                <td>{{ customerAddress.pays }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('customeraddress_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('customeraddress_edit', { 'id': customerAddress.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

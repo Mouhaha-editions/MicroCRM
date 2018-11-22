@@ -1,0 +1,21 @@
+<h4>Mes factures</h4>
+<table class="table table-condensed table-striped">
+    <tr>
+        <th>Numéro de facture</th>
+        <th>Date</th>
+        <th>Montant HT</th>
+        <th>Montant TTC</th>
+        <th></th>
+    </tr>
+    {% for salesDocument in salesDocuments %}
+    <tr>
+        <td>{{ salesDocument.chrono }}</td>
+        <td>{{ salesDocument.dateDebutStr }}</td>
+        <td>{{ salesDocument.totalHT }}</td>
+        <td>{{ salesDocument.totalTTC }}</td>
+        <td><a href="{{ url('crm_archive_facturation_print_pdf',{id:salesDocument.id}) }}" target="_blank">Télécharger</a></td>
+    </tr>
+
+    {% endfor %}
+
+</table>

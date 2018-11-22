@@ -1,0 +1,63 @@
+{% import '@Pagination/Pagination/macro.twig' as macro_page %}
+
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    Documents de vente
+
+                    <a href="{{ url('crm_billing_salesdocument_new') }}" class="pull-right">+ Nouveau</a>
+                {% endblock %}
+                {% block panel_body %}
+                    <table class="table table-condensed">
+                        <tr>
+                            <th style="width:10%">Chrono</th>
+                            <th style="">Client</th>
+                            <th style="width:10%">Type</th>
+                            <th style="width:10%">Date</th>
+                            <th style="width:10%" class="text-right">Total HT</th>
+                            <th style="width:10%" class="text-right">Total TTC</th>
+                            <th style="width:240px">Actions</th>
+                        </tr>
+                        {% for facture in factures.entities %}
+                            <tr>
+                                <td>{{ facture.chrono }}</td>
+                                <td>{{ facture.customer.fullName }}</td>
+                                <td>{{ facture.stateLabel }}</td>
+                                <td>
+                                    {{ facture.isAvoir or facture.isFacture  ? facture.dateStr :'' }}
+                                </td>
+
+                                <td class="text-right">
+                                    {{ (facture.totalHT*(facture.isAvoir?-1:1))|number_format(2,',',' ') }}&euro;
+                                </td>
+                                <td class="text-right">{{ (facture.totalTTC*(facture.isAvoir?-1:1))|number_format(2,',',' ') }}
+                                    &euro;
+                                </td>
+                                <td>
+                                    {% if not facture.isFacture  and not facture.isAvoir %}
+                                        <a href="{{ url('crm_billing_salesdocument_edit',{id:facture.id}) }}"
+                                           class="btn btn-info btn-sm"><i
+                                                    class="fa fa-edit"></i></a>
+                                    {% else %}
+                                        <a href="{{ url('crm_billing_salesdocument_document',{id:facture.id}) }}"
+                                           title="voir le document"
+                                           class="btn btn-info btn-success"><i
+                                                    class="fa fa-file"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table><br/>
+
+                {% endblock %}
+            {% endembed %}
+            page: {{ macro_page.paginate(factures) }}
+        </div>
+    </div>
+{% endblock %}

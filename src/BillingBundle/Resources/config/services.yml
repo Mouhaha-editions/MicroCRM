@@ -1,0 +1,5 @@
+services:
+    facturation.service:
+        class: BillingBundle\Service\FacturationService
+        arguments: ["@doctrine.orm.entity_manager","@pkshetlie.settings"]
+        public: true

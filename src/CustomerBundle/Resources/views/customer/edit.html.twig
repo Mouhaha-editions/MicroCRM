@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-12">
+
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    {{ 'customer_bundle.title_edit_add'|trans }}
+                {% endblock %}
+                {% block panel_body %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_row(form.customerType) }}
+                            {{ form_row(form.firstName) }}
+                            {{ form_row(form.lastName) }}
+                            {{ form_row(form.birthday) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.companyName) }}
+                            {{ form_row(form.siret) }}
+                            {{ form_row(form.comment) }}
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block panel_footer %}
+                    <input type="submit" class="btn btn-primary"
+                           value="{{ 'customer_bundle.edit_add'|trans }}"/>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    {{ 'customer_bundle.title_communications_edit_add'|trans }}
+                    <a href="#" id="addCommunication" data-copy-form=".customerCommunications" data-after=".row:last"
+                             class="pull-right">+ Ajouter</a>{% endblock %}
+                {% block panel_body %}
+                    <div class="customerCommunications"
+                         data-prototype="{%- filter escape -%}{{ include('@Customer/customer/prototypes/communication.html.twig', { 'form': form.customerCommunications.vars.prototype }) }}{%- endfilter -%}">
+                        {% for f in form.customerCommunications %}
+                            {{ include('@Customer/customer/prototypes/communication.html.twig', { 'form': f }) }}
+                        {% endfor %}
+
+
+                    </div>
+                {% endblock %}
+                {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
+                                               value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
+            {% endembed %}
+            </div>
+            <div class="col-md-6">
+                {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                    {% block panel_title %}
+                        {{ 'customer_bundle.title_adresses_edit_add'|trans }}
+                    {% endblock %}
+                    {% block panel_body %}
+                        {% for address in  form.customerAddresses %}
+                            {{ form_widget(address) }}
+                        {% endfor %}
+                    {% endblock %}
+                    {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
+                                                   value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
+                {% endembed %}
+            </div>
+
+        </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

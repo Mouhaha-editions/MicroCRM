@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Customeraddresses list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Customeradressetype</th>
+                <th>Ligne1</th>
+                <th>Ligne2</th>
+                <th>Ligne3</th>
+                <th>Codepostal</th>
+                <th>Ville</th>
+                <th>Pays</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for customerAddress in customerAddresses %}
+            <tr>
+                <td><a href="{{ path('customeraddress_show', { 'id': customerAddress.id }) }}">{{ customerAddress.id }}</a></td>
+                <td>{{ customerAddress.customerAdresseType }}</td>
+                <td>{{ customerAddress.ligne1 }}</td>
+                <td>{{ customerAddress.ligne2 }}</td>
+                <td>{{ customerAddress.ligne3 }}</td>
+                <td>{{ customerAddress.codePostal }}</td>
+                <td>{{ customerAddress.ville }}</td>
+                <td>{{ customerAddress.pays }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('customeraddress_show', { 'id': customerAddress.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('customeraddress_edit', { 'id': customerAddress.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('customeraddress_new') }}">Create a new customerAddress</a>
+        </li>
+    </ul>
+{% endblock %}
