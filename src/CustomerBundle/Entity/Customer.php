@@ -100,7 +100,6 @@ class Customer
             return $this->getCompanyName();
         }
         return $this->getCompanyName() . "(" . $this->getLastName() . ' ' . $this->getFirstName() . ")";
-
     }
 
     /**
