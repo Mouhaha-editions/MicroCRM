@@ -18,6 +18,7 @@ use Pkshetlie\SettingsBundle\Controller\ControllerWithSettings;
 use Pkshetlie\SettingsBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -27,10 +28,35 @@ class CrmController extends ControllerWithSettings
 
     public function indexAction(Request $request)
     {
+        $form = $this->createFormBuilder(null, ['method'=>'get']);
+        $form->add('search', TextType::class,['required'=>false]);
+        $form->add('Ok', SubmitType::class);
+        $form = $form->getForm();
+        $form->handleRequest($request);
+
         $qb = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')->createQueryBuilder('sd')
             ->orderBy('sd.chrono');
 
+
+        if($form->get('search')->getNormData()){
+            $qb->leftJoin('sd.customer','c');
+            $qb->leftJoin('c.customer_addresses', 'a');
+            $qb->leftJoin('c.customer_communications', 'cc');
+            $qb->where('c.companyName LIKE :search')
+                ->orWhere('sd.chrono LIKE :search')
+                ->orWhere('c.lastName LIKE :search')
+                ->orWhere('c.firstName LIKE :search')
+                ->orWhere('c.comment LIKE :search')
+                ->orWhere('cc.value LIKE :search')
+                ->orWhere('a.ville LIKE :search')
+                ->orWhere('a.codePostal LIKE :search')
+                ->setParameter('search', $form->get('search')->getNormData().'%');
+            $qb->groupBy('sd.id');
+        }
+
+
         $factures = $this->get('pkshetlie.pagination')->process($qb,$request);
+
         return $this->render('@Billing/Crm/sales_document_list.html.twig', [
             'factures' => $factures
         ]);

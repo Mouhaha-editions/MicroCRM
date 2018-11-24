@@ -14,6 +14,17 @@
                     <a href="{{ url('crm_billing_salesdocument_new') }}" class="pull-right">+ Nouveau</a>
                 {% endblock %}
                 {% block panel_body %}
+                    {{ form_start(search_form) }}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form_widget(search_form.search) }}
+                        </div>
+                        <div class="col-md-4">
+
+                            {{ form_widget(search_form.Ok) }}
+                        </div>
+                    </div>
+                    {{ form_end(search_form) }}
                     <table class="table table-condensed">
                         <tr>
                             <th style="width:10%">Chrono</th>
