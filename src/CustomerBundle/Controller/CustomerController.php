@@ -9,6 +9,8 @@ use CustomerBundle\Enums\ECustomerCommunicationType;
 use CustomerBundle\Enums\ECustomerType;
 use CustomerBundle\Form\CustomerType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -26,13 +28,33 @@ class CustomerController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $form = $this->createFormBuilder(null, ['method'=>'get']);
+        $form->add('search', TextType::class,['required'=>false]);
+        $form->add('Ok', SubmitType::class);
+        $form = $form->getForm();
+        $form->handleRequest($request);
         $qb = $em->getRepository('CustomerBundle:Customer')->createQueryBuilder('c')
         ;
-        $pagination = $this->get('pkshetlie.pagination')->process($qb,$request);
 
+        if($form->get('search')->getNormData()){
+            $qb->leftJoin('c.customer_addresses', 'a');
+            $qb->leftJoin('c.customer_communications', 'cc');
+            $qb->where('c.companyName LIKE :search')
+                ->orWhere('c.lastName LIKE :search')
+                ->orWhere('c.firstName LIKE :search')
+                ->orWhere('c.comment LIKE :search')
+                ->orWhere('cc.value LIKE :search')
+                ->orWhere('a.ville LIKE :search')
+                ->orWhere('a.codePostal LIKE :search')
+                ->setParameter('search', $form->get('search')->getNormData().'%');
+
+            $qb->groupBy('c.id');
+        }
+        $pagination = $this->get('pkshetlie.pagination')->process($qb,$request);
 
         return $this->render('@Customer/customer/index.html.twig', array(
             'customers' => $pagination,
+            'search_form' => $form->createView(),
         ));
     }
 

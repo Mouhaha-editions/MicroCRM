@@ -1,7 +1,6 @@
 customer_index:
     path:     /
     defaults: { _controller: "CustomerBundle:Customer:index" }
-    methods:  GET
 
 customer_show:
     path:     /{id}/show
