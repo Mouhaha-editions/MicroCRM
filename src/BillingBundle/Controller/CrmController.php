@@ -58,7 +58,8 @@ class CrmController extends ControllerWithSettings
         $factures = $this->get('pkshetlie.pagination')->process($qb,$request);
 
         return $this->render('@Billing/Crm/sales_document_list.html.twig', [
-            'factures' => $factures
+            'factures' => $factures,
+            'search_form'=>$form->createView()
         ]);
 
     }
