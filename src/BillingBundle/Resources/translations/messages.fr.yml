@@ -25,9 +25,11 @@ sales_document:
     client: 'Client'
     state: 'Type'
     comment: 'Commentaire'
+    date: 'Date de la facture'
   placeholder:
     client: '-- Choisir un client --'
     comment: ''
+    date: 'Date de la facture'
 
 sales_document_detail:
   label:

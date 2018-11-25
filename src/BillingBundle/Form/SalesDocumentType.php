@@ -39,9 +39,10 @@ const AUCUN = 300;
                 'attr' => ['placeholder' => "sales_document.placeholder.client"],
                 'label' => 'sales_document.label.client',
                 'required' => true,
-                'choice_label'=>function($t){return $t->getLastName()." ".$t->getFirstName();},
+                'choice_label'=>function($t){return $t->getFullName();},
                 'query_builder'=> function(EntityRepository $em){
                 return $em->createQueryBuilder('c')
+                    ->orderBy('c.companyName')
                     ->orderBy('c.lastName')
                     ->addOrderBy('c.firstName');
                 }
@@ -71,6 +72,13 @@ const AUCUN = 300;
                     'allow_add' => true,
                     'delete_empty' => true,
                     'allow_delete' => true,
+            ])
+            ->add('date', DateType::class, [
+                'format' => DateType::HTML5_FORMAT,
+                'widget' => 'single_text',
+                'required' => false,
+                'attr' => ['placeholder' => "sales_document.placeholder.date"],
+                'label' => 'sales_document.placeholder.date'
             ])
             ->add('Enregistrer', SubmitType::class);
     }

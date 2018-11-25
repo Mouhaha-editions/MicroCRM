@@ -3,6 +3,7 @@
 namespace BillingBundle\Service;
 
 
+use BillingBundle\Exception\BillingDateException;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use BillingBundle\Entity\SalesDocumentDetail;
 use BillingBundle\Entity\SalesDocumentMensualisation;
 use BillingBundle\Entity\SalesDocumentPayment;
 use Pkshetlie\SettingsBundle\Services\SettingsService;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\VarDumper\VarDumper;
 
 class FacturationService
@@ -27,15 +29,21 @@ class FacturationService
         $this->setting_service = $setting_service;
     }
 
+    /**
+     * @param SalesDocument $sd
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws BillingDateException
+     */
     public function process(SalesDocument $sd)
     {
         if ($sd->isFacture()) {
+            $sd->setDate($this->getDate($sd));
             $sd->setChrono($this->getChrono());
-            $sd->setDate(new DateTime());
         }
         if ($sd->isAvoir()) {
+            $sd->setDate($this->getDate($sd, SalesDocument::AVOIR));
             $sd->setChrono($this->getChrono(SalesDocument::AVOIR));
-            $sd->setDate(new DateTime());
         }
 
         $this->_em->flush();
@@ -52,17 +60,17 @@ class FacturationService
         if ($type == SalesDocument::FACTURE) {
             $template = $this->setting_service->get('facture_numerotation_template');
             $last_bill = $this->setting_service->get('facture_numerotation');
-            $this->setting_service->set('facture_numerotation',$last_bill + 1);
+            $this->setting_service->set('facture_numerotation', $last_bill + 1);
         } else {
             $template = $this->setting_service->get('avoir_numerotation_template');
             $last_bill = $this->setting_service->get('avoir_numerotation');
-            $this->setting_service->set('avoir_numerotation',$last_bill + 1);
+            $this->setting_service->set('avoir_numerotation', $last_bill + 1);
         }
         $template = str_replace('{YEAR2}', date('y'), $template);
         $template = str_replace('{YEAR}', date('Y'), $template);
         $template = str_replace('{YEAR4}', date('Y'), $template);
         $template = str_replace('{MONTH2}', date('m'), $template);
-        $template = str_replace('{AUTO}', str_pad($last_bill + 1,4,'0',STR_PAD_LEFT), $template);
+        $template = str_replace('{AUTO}', str_pad($last_bill + 1, 4, '0', STR_PAD_LEFT), $template);
         return $template;
     }
 
@@ -73,34 +81,6 @@ class FacturationService
                 $sd->removeDetail($detail);
                 $detail->setSalesDocument(null);
             }
-        }
-    }
-
-    public function closeFacture(SalesDocument $sd)
-    {
-        /**
-         * @var int $id
-         * @var SalesDocumentPayment $payment
-         */
-        foreach ($sd->getPayments() AS $id => $payment) {
-            if ($payment->getState() == SalesDocumentPayment::STATE_WAITING) {
-                $payment->setSalesDocument(null);
-                $this->_em->remove($payment);
-            }
-        }
-        $this->_em->flush();
-
-        if ($sd->getRestantAPayer() != 0) {
-            $p = new SalesDocumentPayment();
-            $p->setDate(new DateTime());
-            $p->setLabel("Cloture suite à avoir");
-            $p->setAmount($sd->getRestantAPayer());
-            $p->setType(SalesDocumentPayment::TYPE_CLOTURE_FACTURE);
-            $p->setState(SalesDocumentPayment::STATE_PAID);
-            $p->setSalesDocument($sd);
-            $sd->addPayment($p);
-            $this->_em->persist($p);
-            $this->_em->flush();
         }
     }
 
@@ -117,41 +97,35 @@ class FacturationService
     }
 
 
-    public function updatePayment(SalesDocumentPayment $payment)
+    /**
+     * @param SalesDocument $sd
+     * @param int $type
+     * @return DateTime
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws BillingDateException
+     * @throws Exception
+     */
+    private function getDate(SalesDocument $sd, $type = SalesDocument::FACTURE)
     {
-        /** @var SalesDocumentPayment $prev */
-        $prev = $this->_em->getRepository('BillingBundle:SalesDocumentPayment')->find($payment->getId());
-        if ($payment->getMensualisation() != null) {
-            if ($payment->getState() == SalesDocumentPayment::STATE_UNPAID) {
-                /** @var SalesDocumentPayment $next */
-                $next = $this->_em->getRepository('BillingBundle:SalesDocumentPayment')->createQueryBuilder('p')
-                    ->leftJoin('p.mensualisation', 'm')
-                    ->where('m.id = :mensualite')
-                    ->andWhere('p.date = :dateSuivante')
-                    ->setParameter('mensualite', $payment->getMensualisation())
-                    ->setParameter('dateSuivante', (clone $payment->getDate())->modify('+1 months'))
-                    ->setFirstResult(0)->setMaxResults(1)
-                    ->getQuery()->getOneOrNullResult();
-                if ($next == null) {
-                    $next = new SalesDocumentPayment();
-                    $next->setMensualisation($payment->getMensualisation());
-                    $next->setAmount($prev->getAmount());
-                    $next->setLabel($prev->getLabel());
-                    $next->setComment($prev->getComment());
-                    $next->setState(SalesDocumentPayment::STATE_WAITING);
-                    $next->setSalesDocument($prev->getSalesDocument());
-                    $next->setType($prev->getType());
-                    $payment->setAmount(0);
-                    $next->setDate((clone $payment->getDate())->modify('+1 months'));
-                    $this->_em->persist($next);
-                    $this->_em->flush();
+        if($sd->getDate() == null){
+            $this->setting_service->set('facture_numerotation_date', date('Y-m-d'));
+            return new DateTime();
+        }
+        if ($type == SalesDocument::FACTURE) {
+            $date = DateTime::createFromFormat('Y-m-d',$this->setting_service->get('facture_numerotation_date'));
+            if($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')){
+                throw new BillingDateException('La date de la nouvelle facture ne peut pas être enterieure a la date de la facture la plus récente');
+            }
 
-                } else {
-                    $next->setAmount($next->getAmount() + $prev->getAmount());
-                    $payment->setAmount(0);
-                    $this->_em->flush();
-                }
+        } else {
+            $date = DateTime::createFromFormat('Y-m-d',$this->setting_service->get('avoir_numerotation_date'));
+            if($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')){
+                throw new BillingDateException('La date du nouvel avoir ne peut pas être enterieure a la date de l\'avoir le plus récent');
             }
         }
+        $this->setting_service->set('facture_numerotation_date', $sd->getDate()->format('Y-m-d'));
+
+        return $sd->getDate();
     }
 }

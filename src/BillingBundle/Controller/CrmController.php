@@ -6,11 +6,15 @@ namespace BillingBundle\Controller;
 use BillingBundle\Entity\SalesDocument;
 use BillingBundle\Entity\SalesDocumentDetail;
 use BillingBundle\Entity\SalesDocumentProduct;
+use BillingBundle\Exception\BillingDateException;
 use BillingBundle\Form\SalesDocumentProductType;
 use BillingBundle\Form\SalesDocumentType;
 use CustomerBundle\Entity\Customer;
 use CustomerBundle\Entity\CustomerAddress;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -19,6 +23,7 @@ use Pkshetlie\SettingsBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -28,8 +33,8 @@ class CrmController extends ControllerWithSettings
 
     public function indexAction(Request $request)
     {
-        $form = $this->createFormBuilder(null, ['method'=>'get']);
-        $form->add('search', TextType::class,['required'=>false]);
+        $form = $this->createFormBuilder(null, ['method' => 'get']);
+        $form->add('search', TextType::class, ['required' => false]);
         $form->add('Ok', SubmitType::class);
         $form = $form->getForm();
         $form->handleRequest($request);
@@ -38,8 +43,8 @@ class CrmController extends ControllerWithSettings
             ->orderBy('sd.chrono');
 
 
-        if($form->get('search')->getNormData()){
-            $qb->leftJoin('sd.customer','c');
+        if ($form->get('search')->getNormData()) {
+            $qb->leftJoin('sd.customer', 'c');
             $qb->leftJoin('c.customer_addresses', 'a');
             $qb->leftJoin('c.customer_communications', 'cc');
             $qb->where('c.companyName LIKE :search')
@@ -50,16 +55,16 @@ class CrmController extends ControllerWithSettings
                 ->orWhere('cc.value LIKE :search')
                 ->orWhere('a.ville LIKE :search')
                 ->orWhere('a.codePostal LIKE :search')
-                ->setParameter('search', $form->get('search')->getNormData().'%');
+                ->setParameter('search', $form->get('search')->getNormData() . '%');
             $qb->groupBy('sd.id');
         }
 
 
-        $factures = $this->get('pkshetlie.pagination')->process($qb,$request);
+        $factures = $this->get('pkshetlie.pagination')->process($qb, $request);
 
         return $this->render('@Billing/Crm/sales_document_list.html.twig', [
             'factures' => $factures,
-            'search_form'=>$form->createView()
+            'search_form' => $form->createView()
         ]);
 
     }
@@ -115,7 +120,7 @@ class CrmController extends ControllerWithSettings
         foreach ($salesDocument->getDetails() as $detail) {
             $originalDetails->add($detail);
         }
-
+        $salesDocument->setDate(new DateTime());
 
         $form = $this->createForm(SalesDocumentType::class, $salesDocument);
         $form->handleRequest($request);
@@ -136,11 +141,22 @@ class CrmController extends ControllerWithSettings
                 }
 
 
-                $em->persist($salesDocument);
-                $em->flush();
-                $this->get('facturation.service')->process($salesDocument);
-                $this->addFlash('success', 'Document enregistré');
-                return $this->redirectToRoute('crm_billing_salesdocument_index');
+                try {
+                    $this->get('facturation.service')->process($salesDocument);
+                    $em->persist($salesDocument);
+                    $em->flush();
+                    $this->addFlash('success', 'Document enregistré');
+                    return $this->redirectToRoute('crm_billing_salesdocument_index');
+                }catch(BillingDateException $e){
+                    $form->get('date')->addError(new FormError($e->getMessage()));
+                    $this->addFlash('danger', $e->getMessage());
+                } catch (OptimisticLockException $e) {
+                    $this->addFlash('danger', $e->getMessage());
+
+                } catch (ORMException $e) {
+                    $this->addFlash('danger', $e->getMessage());
+                }
+
             } else {
                 $this->addFlash('danger', "Erreur lors de la saisie");
             }
@@ -162,8 +178,8 @@ class CrmController extends ControllerWithSettings
         try {
             $salesDocument = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')->find($request->get('id'));
             $dir = $this->getParameter('kernel.project_dir');
-            $template  =$this->getSetting('facture_template_name');
-            $templateProcessor = new TemplateProcessor($dir . '/src/BillingBundle/Resources/word/'.$template.'.docx');
+            $template = $this->getSetting('facture_template_name');
+            $templateProcessor = new TemplateProcessor($dir . '/src/BillingBundle/Resources/word/' . $template . '.docx');
             /** @var Customer $customer */
             $customer = $salesDocument->getCustomer();
             $templateProcessor->setValue('Client.Name', $customer->getFullName());
@@ -176,8 +192,8 @@ class CrmController extends ControllerWithSettings
             $templateProcessor->setValue('Client.Siret', $customer->getSiret());
             $templateProcessor->setValue('Facture.Reference', $salesDocument->getChrono());
             $templateProcessor->setValue('Facture.Date', $salesDocument->getDateStr());
-            $templateProcessor->setValue('Facture.TotalTtc',number_format($salesDocument->getTotalTTC(),2,',',' '));
-            $templateProcessor->setValue('Facture.TotalHt',number_format($salesDocument->getTotalHT(),2,',',' '));
+            $templateProcessor->setValue('Facture.TotalTtc', number_format($salesDocument->getTotalTTC(), 2, ',', ' '));
+            $templateProcessor->setValue('Facture.TotalHt', number_format($salesDocument->getTotalHT(), 2, ',', ' '));
 
             /**
              * @var int $i
@@ -188,9 +204,9 @@ class CrmController extends ControllerWithSettings
                 $templateProcessor->setValue('Facture.Detail.Label#' . ($i + 1), $detail->getLabel());
                 $templateProcessor->setValue('Facture.Detail.Description#' . ($i + 1), $detail->getDescription());
                 $templateProcessor->setValue('Facture.Detail.Quantity#' . ($i + 1), $detail->getQuantity());
-                $templateProcessor->setValue('Facture.Detail.UnitPriceHt#' . ($i + 1), number_format($detail->getUnitAmountHt(),2,',',' '));
-                $templateProcessor->setValue('Facture.Detail.TotalPriceHt#' . ($i + 1), number_format($detail->getTotalAmountHt(),2,',',' '));
-                $templateProcessor->setValue('Facture.Detail.TotalPriceTTC#' . ($i + 1), number_format($detail->getTotalAmountTtc(),2,',',' '));
+                $templateProcessor->setValue('Facture.Detail.UnitPriceHt#' . ($i + 1), number_format($detail->getUnitAmountHt(), 2, ',', ' '));
+                $templateProcessor->setValue('Facture.Detail.TotalPriceHt#' . ($i + 1), number_format($detail->getTotalAmountHt(), 2, ',', ' '));
+                $templateProcessor->setValue('Facture.Detail.TotalPriceTTC#' . ($i + 1), number_format($detail->getTotalAmountTtc(), 2, ',', ' '));
             }
             $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.docx';
             $templateProcessor->saveAs($file);
