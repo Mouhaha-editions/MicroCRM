@@ -70,6 +70,13 @@ class SalesDocument
      */
     private $comment;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_paid", type="boolean", nullable=false)
+     */
+    private $isPaid = false;
+
 
     /**
      * @var SalesDocumentDetail
@@ -145,6 +152,7 @@ class SalesDocument
     {
         return $this->date;
     }
+
     /**
      * @return string
      */
@@ -188,32 +196,6 @@ class SalesDocument
         return $this->id;
     }
 
-    /**
-     * est payé ?
-     * @return bool
-     */
-    public function isPaid()
-    {
-        return round($this->getRestantAPayer(), 2) == 0;
-    }
-
-    public function getRestantAPayer()
-    {
-        $paid = 0;
-        $total = $this->getTotalTTC();
-        foreach ($this->getPayments() AS $pay) {
-            if (in_array($pay->getState(), [SalesDocumentPayment::STATE_PAID, SalesDocumentPayment::TYPE_CLOTURE_FACTURE])) {
-                $paid += $pay->getAmount();
-            }
-        }
-        return $total - $paid;
-    }
-
-    public function getAmountPaid()
-    {
-        return $this->getTotalTTC() - $this->getRestantAPayer();
-    }
-
 
     /**
      * Add detail.
@@ -238,7 +220,7 @@ class SalesDocument
      */
     public function removeDetail(SalesDocumentDetail $detail)
     {
-        $this->details->removeElement( $detail);
+        $this->details->removeElement($detail);
         $detail->setSalesDocument(null);
         return $this;
     }
@@ -493,4 +475,28 @@ class SalesDocument
     }
 
 
+
+    /**
+     * Set isPaid.
+     *
+     * @param bool $isPaid
+     *
+     * @return SalesDocument
+     */
+    public function setIsPaid($isPaid)
+    {
+        $this->isPaid = $isPaid;
+
+        return $this;
+    }
+
+    /**
+     * Get isPaid.
+     *
+     * @return bool
+     */
+    public function getIsPaid()
+    {
+        return $this->isPaid;
+    }
 }

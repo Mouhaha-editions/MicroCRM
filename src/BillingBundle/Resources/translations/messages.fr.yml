@@ -26,11 +26,12 @@ sales_document:
     state: 'Type'
     comment: 'Commentaire'
     date: 'Date de la facture'
+    isPaid: 'facture payée ?'
   placeholder:
     client: '-- Choisir un client --'
     comment: ''
     date: 'Date de la facture'
-
+    isPaid: ''
 sales_document_detail:
   label:
     label: 'Libellé'

@@ -51,6 +51,12 @@ class Customer
      * @ORM\Column(name="birthday", type="date", nullable=true)
      */
     private $birthday;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="points_fidelite", type="integer", nullable=false)
+     */
+    private $points_fidelite = 0 ;
 
     /**
      * @var string
@@ -377,5 +383,29 @@ class Customer
     public function getSalesDocuments()
     {
         return $this->salesDocuments;
+    }
+
+    /**
+     * Set pointsFidelite.
+     *
+     * @param int $pointsFidelite
+     *
+     * @return Customer
+     */
+    public function setPointsFidelite($pointsFidelite)
+    {
+        $this->points_fidelite = $pointsFidelite;
+
+        return $this;
+    }
+
+    /**
+     * Get pointsFidelite.
+     *
+     * @return int
+     */
+    public function getPointsFidelite()
+    {
+        return $this->points_fidelite;
     }
 }

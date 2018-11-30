@@ -37,6 +37,10 @@ class CustomerType extends AbstractType
                 'label' => 'customer_bundle.forms.customer.label.lastName',
                 'attr' => ['placeholder' => 'customer_bundle.forms.customer.placeholder.lastName',],
                 'required' => false,
+            ])->add('pointsFidelite', null, [
+                'label' => 'customer_bundle.forms.customer.label.pointsFidelite',
+                'attr' => ['placeholder' => 'customer_bundle.forms.customer.placeholder.pointsFidelite',],
+                'required' => false,
             ])
             ->add('birthday', DateType::class, [
                 'label' => 'customer_bundle.forms.customer.label.birthday',

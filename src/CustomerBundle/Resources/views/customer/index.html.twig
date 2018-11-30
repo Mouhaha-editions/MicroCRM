@@ -29,6 +29,7 @@
                             <th>{{ 'customer_bundle.forms.customer.label.customerType'|trans }}</th>
                             <th>{{ 'customer_bundle.forms.customer.label.lastName'|trans }}</th>
                             <th>{{ 'customer_bundle.forms.customer.label.comment'|trans }}</th>
+                            <th>{{ 'customer_bundle.forms.customer.label.pointsFidelite'|trans }}</th>
                             <th>{{ 'customer_bundle.action'|trans }}</th>
                         </tr>
                         </thead>
@@ -40,6 +41,7 @@
                                 <td>{{ customer.customerTypeStr|trans }}</td>
                                 <td>{{ customer.fullName }}</td>
                                 <td>{{ customer.comment }}</td>
+                                <td>{{ customer.pointsFidelite }} <small>pts</small></td>
                                 <td>
                                     <a class="btn btn-sm btn-info"
                                        href="{{ path('customer_edit', { 'id': customer.id }) }}"><i

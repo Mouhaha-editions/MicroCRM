@@ -37,7 +37,7 @@
                         </tr>
                         {% for facture in factures.entities %}
                             <tr>
-                                <td>{{ facture.chrono }}</td>
+                                <td class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}" ><span title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}">{{ facture.chrono }}</span></td>
                                 <td>{{ facture.customer.fullName }}</td>
                                 <td>{{ facture.stateLabel }}</td>
                                 <td>
@@ -53,13 +53,28 @@
                                 <td>
                                     {% if not facture.isFacture  and not facture.isAvoir %}
                                         <a href="{{ url('crm_billing_salesdocument_edit',{id:facture.id}) }}"
-                                           class="btn btn-info btn-sm"><i
+                                           class="btn btn-xs btn-warning "><i
                                                     class="fa fa-edit"></i></a>
                                     {% else %}
                                         <a href="{{ url('crm_billing_salesdocument_document',{id:facture.id}) }}"
-                                           title="voir le document"
-                                           class="btn btn-info btn-success"><i
-                                                    class="fa fa-file"></i></a>
+                                           title="Document .docx"
+                                           class="btn btn-info btn-xs"><i
+                                                    class="fa fa-file-word-o"></i></a>
+                                        {% if not facture.isPaid %}
+                                            <a href="{{ url('crm_billing_salesdocument_toogle_paid',{id:facture.id}) }}"
+                                               title="Changer marqueur payé"
+                                               class="btn-paid btn btn-success btn-xs"><i
+                                                        class="fa fa-euro"></i></a>
+                                        {% else %}
+                                            <a href="{{ url('crm_billing_salesdocument_toogle_paid',{id:facture.id}) }}"
+                                               title="Changer marqueur payé"
+                                               class="btn-paid btn btn-danger btn-xs"><i
+                                                        class="fa fa-euro"></i></a>
+                                        {% endif %}
+                                        {#<a href="{{ url('crm_billing_salesdocument_document_pdf',{id:facture.id}) }}"#}
+                                        {#title="document .pdf"#}
+                                        {#class="btn  btn-danger"><i#}
+                                        {#class="fa fa-file-pdf-o"></i></a>#}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -71,4 +86,35 @@
             page: {{ macro_page.paginate(factures) }}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function(){
+        $('.btn-paid').on('click',function(){
+            var btn = $(this);
+            var success = btn.is('.btn-success');
+            var parent_chrono = btn.closest('tr').find('.chrono');
+            $.ajax({
+                url : btn.attr('href'),
+                success: function(){
+                    if(success){
+                        btn.removeClass('btn-success');
+                        btn.addClass('btn-danger');
+                        parent_chrono.attr('title','Payée');
+                        parent_chrono.removeClass('text-danger');
+                        parent_chrono.addClass('text-success');
+                    }else{
+                        btn.removeClass('btn-danger');
+                        btn.addClass('btn-success');
+                        parent_chrono.attr('title','Non payée');
+                        parent_chrono.removeClass('text-success');
+                        parent_chrono.addClass('text-danger');
+                    }
+                }
+            })
+        return false;
+        });
+    });
+</script>
 {% endblock %}

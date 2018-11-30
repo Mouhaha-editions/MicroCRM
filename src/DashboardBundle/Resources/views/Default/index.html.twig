@@ -124,6 +124,53 @@
                 {% endblock %}
             {% endembed %}
         </div>
+        <div class="col-md-4">
+
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}Chiffre d'affaire
+                {% endblock %}
+                {% block panel_body %}
+                    <div class="ov-widget">
+                        <div class="ov-widget__list">
+                            <div class="ov-widget__item ov-widget__item_tack">
+                                <div class="ov-widget__value">{{ ca_last_year|number_format(2,',',' ') }} &euro;</div>
+                                <div class="ov-widget__info">
+                                    <div class="ov-widget__title">{{ (date('now').format('Y'))-1 }}</div>
+                                    <div class="ov-widget__change"><span>15</span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>
+                                </div>
+                            </div>
+                            <div class="ov-widget__item ov-widget__item_{% if ca_last_year > ca_this_year %}dec{% else %}inc{% endif %}">
+                                <div class="ov-widget__value">{{ ca_this_year|number_format(2,',',' ') }}</div>
+                                <div class="ov-widget__info">
+                                    <div class="ov-widget__title">{{ date('now').format('Y') }}</div>
+                                    <div class="ov-widget__change"><span> {{ (ca_this_year / ca_last_year * 100)|number_format(2,',',' ')}} &percnt; </span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-md-4">
+
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}Compte en banque (théorique)
+                {% endblock %}
+                {% block panel_body %}
+                    <div class="ov-widget">
+                        <div class="ov-widget__list">
+                            <div class="ov-widget__item ov-widget__item_{% if service_settings.get('mon_compte') <= 0 %}dec{% else %}inc{% endif %}">
+                                <div class="ov-widget__value">{{ (service_settings.get('mon_compte')/100)|number_format(2,',',' ') }} &euro;</div>
+                                <div class="ov-widget__info">
+                                    <div class="ov-widget__title">Bientôt les dépenses et entrées d'argent autres que les factures</div>
+                                    {#<div class="ov-widget__change"><span> {{ (ca_this_year / ca_last_year * 100)|number_format(2,',',' ')}} &percnt; </span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
     </div>
 
 {% endblock %}

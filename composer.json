@@ -23,6 +23,7 @@
         "php": ">=5.5.9",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
+        "dompdf/dompdf": "^0.8.2",
         "friendsofsymfony/user-bundle": "~2.0",
         "google/apiclient": "^2.2",
         "incenteev/composer-parameter-handler": "^2.0",

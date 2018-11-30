@@ -23,8 +23,9 @@
             {% embed '@Template/Default/includes/panel/complet.html.twig' %}
                 {% block panel_title %}{{ 'billing_bundle.title_sales_document_facultatif'|trans }}{% endblock %}
                 {% block panel_body %}
-                    {{ form_row(form.date) }}
                     {{ form_row(form.comment) }}
+                    {{ form_row(form.date) }}
+                    {{ form_row(form.isPaid) }}
                 {% endblock %}
 
                 {% block panel_footer %}

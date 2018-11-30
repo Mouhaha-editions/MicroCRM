@@ -18,6 +18,7 @@ customer_bundle:
         comment: 'Commentaire'
         birthday: 'Anniversaire'
         id: 'Num. client'
+        pointsFidelite: 'Points de fidélité'
       placeholder:
         customerType: '-- Choisir --'
         firstName: ''
@@ -27,6 +28,8 @@ customer_bundle:
         siret: ''
         comment: ''
         birthday: ''
+        pointsFidelite: 'Points de fidélité'
+
     customer_communication:
       label:
         value: 'Valeur'

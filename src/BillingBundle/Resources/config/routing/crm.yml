@@ -11,6 +11,13 @@ crm_billing_salesdocument_edit:
 crm_billing_salesdocument_document:
     path:     /order/doc/{id}
     defaults: { _controller: "BillingBundle:Crm:document", id: null }
+crm_billing_salesdocument_document_pdf:
+    path:     /order/doc/{id}/pdf
+    defaults: { _controller: "BillingBundle:Crm:documentPdf", id: null }
+
+crm_billing_salesdocument_toogle_paid:
+    path:     /order/paid/{id}
+    defaults: { _controller: "BillingBundle:Crm:tooglePaid", id: null }
 
     #produits
 crm_billing_product_new:

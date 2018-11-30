@@ -17,6 +17,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
+use PhpOffice\PhpWord\Exception\Exception;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Pkshetlie\SettingsBundle\Controller\ControllerWithSettings;
 use Pkshetlie\SettingsBundle\Entity\Setting;
@@ -25,8 +26,10 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\VarDumper\VarDumper;
 
 class CrmController extends ControllerWithSettings
 {
@@ -40,8 +43,8 @@ class CrmController extends ControllerWithSettings
         $form->handleRequest($request);
 
         $qb = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')->createQueryBuilder('sd')
-            ->orderBy('sd.state','ASC')
-            ->addOrderBy('sd.chrono','DESC');
+            ->orderBy('sd.state', 'ASC')
+            ->addOrderBy('sd.chrono', 'DESC');
 
 
         if ($form->get('search')->getNormData()) {
@@ -113,6 +116,12 @@ class CrmController extends ControllerWithSettings
         ]);
     }
 
+    public function tooglePaidAction(Request $request, SalesDocument $sd)
+    {
+        $this->get('facturation.service')->toogleIsPaid($sd);
+        return new JsonResponse(['success'=>true]);
+    }
+
     public function editAction(Request $request, SalesDocument $salesDocument)
     {
         $originalDetails = new ArrayCollection();
@@ -148,7 +157,7 @@ class CrmController extends ControllerWithSettings
                     $em->flush();
                     $this->addFlash('success', 'Document enregistré');
                     return $this->redirectToRoute('crm_billing_salesdocument_index');
-                }catch(BillingDateException $e){
+                } catch (BillingDateException $e) {
                     $form->get('date')->addError(new FormError($e->getMessage()));
                     $this->addFlash('danger', $e->getMessage());
                 } catch (OptimisticLockException $e) {
@@ -174,13 +183,14 @@ class CrmController extends ControllerWithSettings
         ]);
     }
 
-    public function documentAction(Request $request, SalesDocument $salesDocument = null)
+    public function documentAction(Request $request, SalesDocument $salesDocument = null, $pdf = false)
     {
         try {
             $salesDocument = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')->find($request->get('id'));
             $dir = $this->getParameter('kernel.project_dir');
             $template = $this->getSetting('facture_template_name');
             $templateProcessor = new TemplateProcessor($dir . '/src/BillingBundle/Resources/word/' . $template . '.docx');
+
             /** @var Customer $customer */
             $customer = $salesDocument->getCustomer();
             $templateProcessor->setValue('Client.Name', $customer->getFullName());
@@ -212,16 +222,31 @@ class CrmController extends ControllerWithSettings
             $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.docx';
             $templateProcessor->saveAs($file);
 
+            if ($pdf) {
+                $docxfile = $file;
+                \PhpOffice\PhpWord\Settings::setPdfRendererPath($dir.'/vendor/dompdf/dompdf/src');
+                \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+                $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.pdf';
+                $temp = \PhpOffice\PhpWord\IOFactory::load($docxfile);
+                $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($temp, 'PDF');
+                $xmlWriter->save($file, TRUE);
+            }
         } catch (CopyFileException $e) {
         } catch (CreateTemporaryFileException $e) {
+        } catch (Exception $e) {
         }
         $response = new BinaryFileResponse($file);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $salesDocument->getChrono() . '.docx'
+            $salesDocument->getChrono() . ($pdf ? '.pdf' : '.docx')
         );
 
         return $response;
+    }
+
+    public function documentPdfAction(Request $request, SalesDocument $salesDocument = null)
+    {
+        return $this->documentAction($request, $salesDocument, true);
     }
 }
 

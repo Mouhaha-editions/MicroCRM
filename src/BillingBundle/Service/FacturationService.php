@@ -39,7 +39,7 @@ class FacturationService
             $sd->setDate($this->getDate($sd, SalesDocument::AVOIR));
             $sd->setChrono($this->getChrono($sd, SalesDocument::AVOIR));
         }
-
+        $this->checkIfPaid($sd);
         $this->_em->flush();
     }
 
@@ -50,7 +50,7 @@ class FacturationService
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    private function getChrono(SalesDocument $sd,$type = SalesDocument::FACTURE)
+    private function getChrono(SalesDocument $sd, $type = SalesDocument::FACTURE)
     {
         if ($type == SalesDocument::FACTURE) {
             $template = $this->setting_service->get('facture_numerotation_template');
@@ -61,7 +61,7 @@ class FacturationService
             $last_bill = $this->setting_service->get('avoir_numerotation');
             $this->setting_service->set('avoir_numerotation', $last_bill + 1);
         }
-        $template = str_replace('{YEAR2}',$sd->getDate()->format('y'), $template);
+        $template = str_replace('{YEAR2}', $sd->getDate()->format('y'), $template);
         $template = str_replace('{YEAR}', $sd->getDate()->format('Y'), $template);
         $template = str_replace('{YEAR4}', $sd->getDate()->format('Y'), $template);
         $template = str_replace('{MONTH2}', $sd->getDate()->format('m'), $template);
@@ -103,24 +103,53 @@ class FacturationService
      */
     private function getDate(SalesDocument $sd, $type = SalesDocument::FACTURE)
     {
-        if($sd->getDate() == null){
+        if ($sd->getDate() == null) {
             $this->setting_service->set('facture_numerotation_date', date('Y-m-d'));
             return new DateTime();
         }
         if ($type == SalesDocument::FACTURE) {
-            $date = DateTime::createFromFormat('Y-m-d',$this->setting_service->get('facture_numerotation_date'));
-            if($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')){
+            $date = DateTime::createFromFormat('Y-m-d', $this->setting_service->get('facture_numerotation_date'));
+            if ($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')) {
                 throw new BillingDateException('La date de la nouvelle facture ne peut pas être enterieure a la date de la facture la plus récente');
             }
 
         } else {
-            $date = DateTime::createFromFormat('Y-m-d',$this->setting_service->get('avoir_numerotation_date'));
-            if($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')){
+            $date = DateTime::createFromFormat('Y-m-d', $this->setting_service->get('avoir_numerotation_date'));
+            if ($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')) {
                 throw new BillingDateException('La date du nouvel avoir ne peut pas être enterieure a la date de l\'avoir le plus récent');
             }
         }
         $this->setting_service->set('facture_numerotation_date', $sd->getDate()->format('Y-m-d'));
 
         return $sd->getDate();
+    }
+
+    private function checkIfPaid(SalesDocument $sd)
+    {
+        if ($sd->getIsPaid()) {
+            $this->applyAccountAndFidelity($sd);
+        }
+    }
+
+    public function toogleIsPaid(SalesDocument $sd)
+    {
+        $sd->setIsPaid(!$sd->getIsPaid());
+        $this->applyAccountAndFidelity($sd);
+        $this->_em->flush();
+    }
+
+    private function applyAccountAndFidelity(SalesDocument $sd)
+    {
+        $ratio = $this->setting_service->get('ratio_points_fidelite', 0);
+        $account = $this->setting_service->get('mon_compte', 0);
+
+        if ($sd->getState() == SalesDocument::FACTURE) {
+            $sd->getCustomer()->setPointsFidelite($sd->getCustomer()->getPointsFidelite() + ($ratio * $sd->getTotalTTC() *($sd->getIsPaid() ? 1:-1)));
+            $this->setting_service->set('mon_compte', $account + (int)($sd->getTotalTTC()*100*($sd->getIsPaid() ? 1:-1)));
+        }
+        if ($sd->getState() == SalesDocument::AVOIR) {
+            $sd->getCustomer()->setPointsFidelite($sd->getCustomer()->getPointsFidelite() - ($ratio * $sd->getTotalTTC()*($sd->getIsPaid() ? 1:-1)));
+            $this->setting_service->set('mon_compte', $account - (int)($sd->getTotalTTC()*100*($sd->getIsPaid() ? 1:-1)));
+        }
     }
 }

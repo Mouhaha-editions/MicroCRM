@@ -54,6 +54,12 @@ const AUCUN = 300;
                 'required' => false,
 
             ])
+            ->add('isPaid', null, [
+                'attr' => ['placeholder' => "sales_document.placeholder.isPaid"],
+                'label' => 'sales_document.label.isPaid',
+                'required' => false,
+
+            ])
             ->add('state', ChoiceType::class, [
                 'required' => true,
                 'choices' => [
