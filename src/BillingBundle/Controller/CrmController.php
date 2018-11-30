@@ -40,7 +40,8 @@ class CrmController extends ControllerWithSettings
         $form->handleRequest($request);
 
         $qb = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')->createQueryBuilder('sd')
-            ->orderBy('sd.chrono');
+            ->orderBy('sd.state','ASC')
+            ->addOrderBy('sd.chrono','DESC');
 
 
         if ($form->get('search')->getNormData()) {

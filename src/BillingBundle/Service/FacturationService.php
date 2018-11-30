@@ -5,17 +5,11 @@ namespace BillingBundle\Service;
 
 use BillingBundle\Exception\BillingDateException;
 use DateTime;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use BillingBundle\Entity\SalesDocument;
 use BillingBundle\Entity\SalesDocumentDetail;
-use BillingBundle\Entity\SalesDocumentMensualisation;
-use BillingBundle\Entity\SalesDocumentPayment;
 use Pkshetlie\SettingsBundle\Services\SettingsService;
-use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\VarDumper\VarDumper;
 
 class FacturationService
 {
@@ -50,6 +44,7 @@ class FacturationService
     }
 
     /**
+     * @param SalesDocument $sd
      * @param int $type
      * @return string
      * @throws \Doctrine\ORM\ORMException
@@ -57,7 +52,6 @@ class FacturationService
      */
     private function getChrono(SalesDocument $sd,$type = SalesDocument::FACTURE)
     {
-
         if ($type == SalesDocument::FACTURE) {
             $template = $this->setting_service->get('facture_numerotation_template');
             $last_bill = $this->setting_service->get('facture_numerotation');
