@@ -39,11 +39,11 @@ class FacturationService
     {
         if ($sd->isFacture()) {
             $sd->setDate($this->getDate($sd));
-            $sd->setChrono($this->getChrono());
+            $sd->setChrono($this->getChrono($sd));
         }
         if ($sd->isAvoir()) {
             $sd->setDate($this->getDate($sd, SalesDocument::AVOIR));
-            $sd->setChrono($this->getChrono(SalesDocument::AVOIR));
+            $sd->setChrono($this->getChrono($sd, SalesDocument::AVOIR));
         }
 
         $this->_em->flush();
@@ -55,8 +55,9 @@ class FacturationService
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    private function getChrono($type = SalesDocument::FACTURE)
+    private function getChrono(SalesDocument $sd,$type = SalesDocument::FACTURE)
     {
+
         if ($type == SalesDocument::FACTURE) {
             $template = $this->setting_service->get('facture_numerotation_template');
             $last_bill = $this->setting_service->get('facture_numerotation');
@@ -66,10 +67,10 @@ class FacturationService
             $last_bill = $this->setting_service->get('avoir_numerotation');
             $this->setting_service->set('avoir_numerotation', $last_bill + 1);
         }
-        $template = str_replace('{YEAR2}', date('y'), $template);
-        $template = str_replace('{YEAR}', date('Y'), $template);
-        $template = str_replace('{YEAR4}', date('Y'), $template);
-        $template = str_replace('{MONTH2}', date('m'), $template);
+        $template = str_replace('{YEAR2}',$sd->getDate()->format('y'), $template);
+        $template = str_replace('{YEAR}', $sd->getDate()->format('Y'), $template);
+        $template = str_replace('{YEAR4}', $sd->getDate()->format('Y'), $template);
+        $template = str_replace('{MONTH2}', $sd->getDate()->format('m'), $template);
         $template = str_replace('{AUTO}', str_pad($last_bill + 1, 4, '0', STR_PAD_LEFT), $template);
         return $template;
     }
