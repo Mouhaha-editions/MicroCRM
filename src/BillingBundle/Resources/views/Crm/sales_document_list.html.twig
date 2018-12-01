@@ -37,7 +37,17 @@
                         </tr>
                         {% for facture in factures.entities %}
                             <tr>
-                                <td class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}" ><span title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}">{{ facture.chrono }}</span></td>
+                                {% if facture.isFacture or facture.isAvoir %}
+                                <td>
+                                    <a class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}" title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}" href="{{ path('crm_billing_salesdocument_document', {'id': facture.id}) }}">{{ facture.chrono }}</a>
+                                </td>
+                                {% else %}
+                                    <td >
+                                        <a class="chrono text-warning" href="{{ path('crm_billing_salesdocument_edit', {'id': facture.id}) }}">
+                                            Bon de commande
+                                        </a>
+                                    </td>
+                                    {% endif %}
                                 <td><a href="{{ url('customer_edit',{id:facture.customer.id}) }}">{{ facture.customer.fullName }}</a></td>
                                 <td>{{ facture.stateLabel }}</td>
                                 <td>
