@@ -71,7 +71,6 @@
                         <li></li>
                     </ul>
                 </li>
-                <li><small>{{ service_version.prod }}</small></li>
             </ul>
         </div>
     </nav>
@@ -92,7 +91,7 @@
                     <div class="sidebar__menu">
                         <div class="sidebar__title">Pages</div>
                         <ul class="nav nav-menu">
-                            <li class="active"><a href="/">
+                            <li {% if app.request.get('_route') starts with 'dashboard' %}class="active"{% endif %}><a href="/">
                                     <div class="nav-menu__ico"><i class="fa fa-fw fa-star"></i></div>
                                     <div class="nav-menu__text"><span>Dashboard</span></div>
                                 </a></li>
@@ -101,6 +100,7 @@
                                     <div class="nav-menu__ico"><i class="fa fa-fw fa-users"></i></div>
                                     <div class="nav-menu__text"><span>Clients</span></div>
                                 </a></li>
+
                             <li {% if app.request.get('_route') starts with 'crm_billing_' %}class="active opened"{% endif %}>
                                 <a href="#">
                                     <div class="nav-menu__ico"><i class="fa fa-fw fa-envelope"></i></div>
@@ -114,6 +114,12 @@
                                         <a href="{{ url('crm_billing_product_index') }}">Produits</a></li>
                                 </ul>
                             </li>
+                            <li><hr/></li>
+                            <li {% if app.request.get('_route') starts with 'changelog' %}class="active"{% endif %}><a
+                                        href="{{ url('changelog') }}">
+                                    <div class="nav-menu__ico"><i class="fa fa-fw fa-bug"></i></div>
+                                    <div class="nav-menu__text"><span>{{ service_version.prod }}</span></div>
+                                </a></li>
                         </ul>
 
                     </div>
