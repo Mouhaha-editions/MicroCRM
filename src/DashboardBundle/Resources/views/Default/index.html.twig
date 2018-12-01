@@ -1,7 +1,46 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="row tile_count">
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-eur"></i> Chiffre d'affaire {{ (date('now').format('Y'))-1 }}</span>
+            <div class="count">{{ ca_last_year|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">Mais ca c'était avant ...</span>
+        </div>
+
+        {% set progression = (ca_this_year / ca_last_year * 100) %}
+        {% set color = progression <=0 ? 'red':'green' %}
+        {% set sort = progression <=0 ? 'desc':'asc' %}
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i class="fa fa-eur"></i> Chiffre d'affaire {{ date('now').format('Y') }}</span>
+            <div class="count {{ color }}">{{ ca_this_year|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom"><i class="{{ color }}"><i
+                            class="fa fa-sort-{{ sort }}"></i>{{ progression|number_format(0,',',' ') }}% </i>
+            {% if progression < 0 %}
+                Mouai .. peut faire mieux ...
+            {% elseif progression < 10 %}
+                Mouai ...
+            {% elseif progression < 50 %}
+                C'est un bon début !
+            {% elseif progression < 100 %}
+                Wahoo .. respect !
+            {% else %}
+                Incroyable, je n'en reviens pas !
+            {% endif %}</span>
+        </div>
+        {% set color = service_settings.get('mon_compte') <=0 ? 'red':'green' %}
+        <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-bank"></i> Compte en banque (théorique)</span>
+            <div class="count {{ color }}">{{ (service_settings.get('mon_compte')/100)|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">On est riche ! ou pas ...</span>
+        </div>
+
+    </div>
     <div class="row">
+
+
         <div class="col-md-4">
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}R.D.V du jour
@@ -124,53 +163,7 @@
                 {% endblock %}
             {% endembed %}
         </div>
-        <div class="col-md-4">
 
-            {% embed 'embeded/panel.html.twig' %}
-                {% block panel_title %}Chiffre d'affaire
-                {% endblock %}
-                {% block panel_body %}
-                    <div class="ov-widget">
-                        <div class="ov-widget__list">
-                            <div class="ov-widget__item ov-widget__item_tack">
-                                <div class="ov-widget__value">{{ ca_last_year|number_format(2,',',' ') }} &euro;</div>
-                                <div class="ov-widget__info">
-                                    <div class="ov-widget__title">{{ (date('now').format('Y'))-1 }}</div>
-                                    <div class="ov-widget__change"><span>15</span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>
-                                </div>
-                            </div>
-                            <div class="ov-widget__item ov-widget__item_{% if ca_last_year > ca_this_year %}dec{% else %}inc{% endif %}">
-                                <div class="ov-widget__value">{{ ca_this_year|number_format(2,',',' ') }} &euro;</div>
-                                <div class="ov-widget__info">
-                                    <div class="ov-widget__title">{{ date('now').format('Y') }}</div>
-                                    <div class="ov-widget__change"><span> {{ (ca_this_year / ca_last_year * 100)|number_format(2,',',' ')}} &percnt; </span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endblock %}
-            {% endembed %}
-        </div>
-        <div class="col-md-4">
-
-            {% embed 'embeded/panel.html.twig' %}
-                {% block panel_title %}Compte en banque (théorique)
-                {% endblock %}
-                {% block panel_body %}
-                    <div class="ov-widget">
-                        <div class="ov-widget__list">
-                            <div class="ov-widget__item ov-widget__item_{% if service_settings.get('mon_compte') <= 0 %}dec{% else %}inc{% endif %}">
-                                <div class="ov-widget__value">{{ (service_settings.get('mon_compte')/100)|number_format(2,',',' ') }} &euro;</div>
-                                <div class="ov-widget__info">
-                                    <div class="ov-widget__title">Bientôt les dépenses et entrées d'argent autres que les factures</div>
-                                    {#<div class="ov-widget__change"><span> {{ (ca_this_year / ca_last_year * 100)|number_format(2,',',' ')}} &percnt; </span><span class="fa fa-level-up"></span><span class="fa fa-level-down"></span><span class="fa fa-bolt"></span><span class="fa fa-thumb-tack"></span></div>#}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endblock %}
-            {% endembed %}
-        </div>
     </div>
 
 {% endblock %}
