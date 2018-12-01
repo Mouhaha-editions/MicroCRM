@@ -4,8 +4,7 @@
 {% block body %}
     {{ form_start(form) }}
     <div class="row">
-        <div class="col-md-12">
-
+        <div class="col-md-8">
             {% embed '@Template/Default/includes/panel/complet.html.twig' %}
                 {% block panel_title %}
                     {{ 'customer_bundle.title_edit_add'|trans }}
@@ -32,14 +31,49 @@
                 {% endblock %}
             {% endembed %}
         </div>
+        <div class="col-md-4">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    Derniers achats
+                    <small>(5 derniers)</small>
+                {% endblock %}
+                {% block panel_body %}
+                    <div class="sp-widget__list">
+                        {% for detail in details %}
+                            <div class="sp-widget__item">
+                                <div class="sp-widget__user">
+                                    {% if detail.salesDocument.isFacture or detail.salesDocument.isAvoir %}
+                                    <a class="text-{% if detail.salesDocument.isPaid %}success{% else %}danger{% endif %}"
+                                       href="{{ url('crm_billing_salesdocument_index',{form:{search:detail.salesDocument.chrono}}) }}">
+                                        {% else %}
+                                        <a class="text-warning"
+                                           href="{{ url('crm_billing_salesdocument_edit',{id:detail.salesDocument.id}) }}">
+                                        {% endif %}
+                                        {% if detail.salesDocument.isFacture or detail.salesDocument.isAvoir %}{{ detail.salesDocument.chrono }}{% else %}Bon de commande{% endif %}
+
+                                    </a>
+                                    <span class="sp-widget__date">, {{ detail.date is null ? detail.salesDocument.date.format('d/m/Y'): detail.date.format('d/m/Y') }}</span>, {{ detail.totalAmountTtc|number_format(2,',',' ') }}
+                                    &euro;
+                                </div>
+                                <div class="sp-widget__text">{{ detail.label }}<br/>
+                                    <small>{{ detail.description }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endblock %}
+                {% block panel_footer %}
+                {% endblock %}
+            {% endembed %}
+        </div>
     </div>
-        <div class="row">
-            <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-6">
             {% embed '@Template/Default/includes/panel/complet.html.twig' %}
                 {% block panel_title %}
                     {{ 'customer_bundle.title_communications_edit_add'|trans }}
                     <a href="#" id="addCommunication" data-copy-form=".customerCommunications" data-after=".row:last"
-                             class="pull-right">+ Ajouter</a>{% endblock %}
+                       class="pull-right">+ Ajouter</a>{% endblock %}
                 {% block panel_body %}
                     <div class="customerCommunications"
                          data-prototype="{%- filter escape -%}{{ include('@Customer/customer/prototypes/communication.html.twig', { 'form': form.customerCommunications.vars.prototype }) }}{%- endfilter -%}">
@@ -53,23 +87,23 @@
                 {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
                                                value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
             {% endembed %}
-            </div>
-            <div class="col-md-6">
-                {% embed '@Template/Default/includes/panel/complet.html.twig' %}
-                    {% block panel_title %}
-                        {{ 'customer_bundle.title_adresses_edit_add'|trans }}
-                    {% endblock %}
-                    {% block panel_body %}
-                        {% for address in  form.customerAddresses %}
-                            {{ form_widget(address) }}
-                        {% endfor %}
-                    {% endblock %}
-                    {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
-                                                   value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
-                {% endembed %}
-            </div>
-
         </div>
+        <div class="col-md-6">
+            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+                {% block panel_title %}
+                    {{ 'customer_bundle.title_adresses_edit_add'|trans }}
+                {% endblock %}
+                {% block panel_body %}
+                    {% for address in  form.customerAddresses %}
+                        {{ form_widget(address) }}
+                    {% endfor %}
+                {% endblock %}
+                {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
+                                               value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
+            {% endembed %}
+        </div>
+
+    </div>
 
     {{ form_end(form) }}
 

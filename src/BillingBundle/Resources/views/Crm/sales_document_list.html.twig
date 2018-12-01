@@ -38,7 +38,7 @@
                         {% for facture in factures.entities %}
                             <tr>
                                 <td class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}" ><span title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}">{{ facture.chrono }}</span></td>
-                                <td>{{ facture.customer.fullName }}</td>
+                                <td><a href="{{ url('customer_edit',{id:facture.customer.id}) }}">{{ facture.customer.fullName }}</a></td>
                                 <td>{{ facture.stateLabel }}</td>
                                 <td>
                                     {{ facture.isAvoir or facture.isFacture  ? facture.dateStr :'' }}

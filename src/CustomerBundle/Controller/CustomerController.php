@@ -2,6 +2,8 @@
 
 namespace CustomerBundle\Controller;
 
+use BillingBundle\Entity\SalesDocument;
+use BillingBundle\Entity\SalesDocumentDetail;
 use CustomerBundle\Entity\Customer;
 use CustomerBundle\Entity\CustomerAddress;
 use CustomerBundle\Entity\CustomerCommunication;
@@ -122,10 +124,27 @@ class CustomerController extends Controller
             $this->addFlash('success', $t->trans('customer_bundle.success_edit_add'));
             return $this->redirectToRoute('customer_index');
         }
+        /** @var SalesDocumentDetail[] $details */
+        $details = [];
+        if($customer->getId() !== null){
+            $details = $this->getDoctrine()->getRepository('BillingBundle:SalesDocumentDetail')
+                ->createQueryBuilder('sdd')
+                ->leftJoin('sdd.salesDocument','sd')
+                ->orderBy('sdd.date', 'desc')
+                ->addOrderBy('sd.date','desc')
+                ->where('sd.state IN (:states)')
+                ->andWhere('sd.customer = :customer')
+                ->setParameter('states', [SalesDocument::FACTURE, SalesDocument::BON_COMMANDE])
+                ->setParameter('customer', $customer)
+                ->setMaxResults(5)
+                ->setFirstResult(0)
+            ->getQuery()->getResult();
+        }
 
         return $this->render('@Customer/customer/edit.html.twig', array(
             'customer' => $customer,
-            'form' => $editForm->createView()
+            'form' => $editForm->createView(),
+            'details'=>$details
         ));
     }
 
