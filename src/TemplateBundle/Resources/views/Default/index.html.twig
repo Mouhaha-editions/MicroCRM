@@ -433,6 +433,10 @@
             deleteForm($(this));
             return false;
         });
+        $(document).on('click', '.confirm', function () {
+
+            return confirm('Etes vous certain(e) de vouloir continuer cette action ? ');
+        });
     });
 
     function deleteForm(t) {
@@ -440,6 +444,7 @@
             t.closest($(t).data('closest')).remove();
         }
     }
+
 
     function cloneForm(t) {
         let $collectionHolder = $(t.data('copy-form'));
