@@ -7,11 +7,14 @@
 
     <div class="row">
         <div class="col-md-12">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
-                    Documents de vente
-
-                    <a href="{{ url('crm_billing_salesdocument_new') }}" class="pull-right">+ Nouveau</a>
+                    <h2>Documents de vente</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a href="{{ url('crm_billing_salesdocument_new') }}" class="pull-right">+ Nouveau</a>
+                        </li>
+                    </ul>
                 {% endblock %}
                 {% block panel_body %}
                     {{ form_start(search_form) }}
@@ -20,7 +23,6 @@
                             {{ form_widget(search_form.search) }}
                         </div>
                         <div class="col-md-4">
-
                             {{ form_widget(search_form.Ok) }}
                         </div>
                     </div>
@@ -38,17 +40,22 @@
                         {% for facture in factures.entities %}
                             <tr>
                                 {% if facture.isFacture or facture.isAvoir %}
-                                <td>
-                                    <a class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}" title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}" href="{{ path('crm_billing_salesdocument_document', {'id': facture.id}) }}">{{ facture.chrono }}</a>
-                                </td>
+                                    <td>
+                                        <a class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}"
+                                           title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}"
+                                           href="{{ path('crm_billing_salesdocument_document', {'id': facture.id}) }}">{{ facture.chrono }}</a>
+                                    </td>
                                 {% else %}
-                                    <td >
-                                        <a class="chrono text-warning" href="{{ path('crm_billing_salesdocument_edit', {'id': facture.id}) }}">
+                                    <td>
+                                        <a class="chrono text-warning"
+                                           href="{{ path('crm_billing_salesdocument_edit', {'id': facture.id}) }}">
                                             Brouillon
                                         </a>
                                     </td>
-                                    {% endif %}
-                                <td><a href="{{ url('customer_edit',{id:facture.customer.id}) }}">{{ facture.customer.fullName }}</a></td>
+                                {% endif %}
+                                <td>
+                                    <a href="{{ url('customer_edit',{id:facture.customer.id}) }}">{{ facture.customer.fullName }}</a>
+                                </td>
                                 <td>{{ facture.stateLabel }}</td>
                                 <td>
                                     {{ facture.isAvoir or facture.isFacture  ? facture.dateStr :'' }}
@@ -102,32 +109,32 @@
 {% endblock %}
 
 {% block javascripts %}
-<script>
-    $(function(){
-        $('.btn-paid').on('click',function(){
-            var btn = $(this);
-            var success = btn.is('.btn-success');
-            var parent_chrono = btn.closest('tr').find('.chrono');
-            $.ajax({
-                url : btn.attr('href'),
-                success: function(){
-                    if(success){
-                        btn.removeClass('btn-success');
-                        btn.addClass('btn-danger');
-                        parent_chrono.attr('title','Payée');
-                        parent_chrono.removeClass('text-danger');
-                        parent_chrono.addClass('text-success');
-                    }else{
-                        btn.removeClass('btn-danger');
-                        btn.addClass('btn-success');
-                        parent_chrono.attr('title','Non payée');
-                        parent_chrono.removeClass('text-success');
-                        parent_chrono.addClass('text-danger');
+    <script>
+        $(function () {
+            $('.btn-paid').on('click', function () {
+                var btn = $(this);
+                var success = btn.is('.btn-success');
+                var parent_chrono = btn.closest('tr').find('.chrono');
+                $.ajax({
+                    url: btn.attr('href'),
+                    success: function () {
+                        if (success) {
+                            btn.removeClass('btn-success');
+                            btn.addClass('btn-danger');
+                            parent_chrono.attr('title', 'Payée');
+                            parent_chrono.removeClass('text-danger');
+                            parent_chrono.addClass('text-success');
+                        } else {
+                            btn.removeClass('btn-danger');
+                            btn.addClass('btn-success');
+                            parent_chrono.attr('title', 'Non payée');
+                            parent_chrono.removeClass('text-success');
+                            parent_chrono.addClass('text-danger');
+                        }
                     }
-                }
-            })
-        return false;
+                })
+                return false;
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

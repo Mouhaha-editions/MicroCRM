@@ -4,11 +4,15 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
                     {{ 'customer_bundle.title_index'|trans }}
-                    <a class="pull-right"
-                       href="{{ url('customer_new') }}">+ {{ 'customer_bundle.edit_add_link'|trans }}</a>
+
+                {% endblock %}
+                {% block panel_button %}
+
+                    <a href="{{ url('customer_new') }}" class="pull-right">+ Nouveau</a>
+
                 {% endblock %}
                 {% block panel_body %}
                     {{ form_start(search_form) }}
@@ -17,8 +21,8 @@
                             {{ form_widget(search_form.search) }}
                         </div>
                         <div class="col-md-4">
-
                             {{ form_widget(search_form.Ok) }}
+
                         </div>
                     </div>
                     {{ form_end(search_form) }}
@@ -41,7 +45,9 @@
                                 <td>{{ customer.customerTypeStr|trans }}</td>
                                 <td>{{ customer.fullName }}</td>
                                 <td>{{ customer.comment }}</td>
-                                <td>{{ customer.pointsFidelite }} <small>pts</small></td>
+                                <td>{{ customer.pointsFidelite }}
+                                    <small>pts</small>
+                                </td>
                                 <td>
                                     <a class="btn btn-sm btn-info"
                                        href="{{ path('customer_edit', { 'id': customer.id }) }}"><i

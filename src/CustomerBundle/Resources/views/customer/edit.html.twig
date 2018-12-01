@@ -5,7 +5,7 @@
     {{ form_start(form) }}
     <div class="row">
         <div class="col-md-8">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
                     {{ 'customer_bundle.title_edit_add'|trans }}
                 {% endblock %}
@@ -32,35 +32,48 @@
             {% endembed %}
         </div>
         <div class="col-md-4">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
+                {% block additionnal_class %}body_height_250{% endblock %}
                 {% block panel_title %}
                     Derniers achats
-                    <small>(5 derniers)</small>
+                    <small>(40 derniers)</small>
                 {% endblock %}
                 {% block panel_body %}
-                    <div class="sp-widget__list">
-                        {% for detail in details %}
-                            <div class="sp-widget__item">
-                                <div class="sp-widget__user">
-                                    {% if detail.salesDocument.isFacture or detail.salesDocument.isAvoir %}
-                                    <a class="text-{% if detail.salesDocument.isPaid %}success{% else %}danger{% endif %}"
-                                       href="{{ url('crm_billing_salesdocument_index',{form:{search:detail.salesDocument.chrono}}) }}">
-                                        {% else %}
-                                        <a class="text-warning"
-                                           href="{{ url('crm_billing_salesdocument_edit',{id:detail.salesDocument.id}) }}">
-                                        {% endif %}
-                                        {% if detail.salesDocument.isFacture or detail.salesDocument.isAvoir %}{{ detail.salesDocument.chrono }}{% else %}Bon de commande{% endif %}
+                    <ul class="list-unstyled timeline">
+                        {% for salesDocument in salesDocuments %}
+                            <li >
+                                <div class="block">
+                                    <div class="tags">
+                                        {% if salesDocument.isFacture or salesDocument.isAvoir %}
 
-                                    </a>
-                                    <span class="sp-widget__date">, {{ detail.date is null ? detail.salesDocument.date.format('d/m/Y'): detail.date.format('d/m/Y') }}</span>, {{ detail.totalAmountTtc|number_format(2,',',' ') }}
-                                    &euro;
+                                            <a class="text-{% if salesDocument.isPaid %}success{% else %}danger{% endif %} tag"
+                                               href="{{ url('crm_billing_salesdocument_index',{form:{search:salesDocument.chrono}}) }}"><span>{{ salesDocument.chrono }}</span></a>
+                                        {% else %}
+                                            <a class="text-warning tag"
+                                               href="{{ url('crm_billing_salesdocument_edit',{id:salesDocument.id}) }}">
+                                                <span>Brouillon</span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    {% for detail in salesDocument.details %}
+                                    <div class="block_content">
+                                        <h2 class="title">
+                                            <a>{{ detail.label }}</a>
+                                        </h2>
+                                        <div class="byline">
+                                            <span>{{ detail.date is null ? salesDocument.date.format('d/m/Y'): detail.date.format('d/m/Y') }}</span>,  <a>{{ detail.totalAmountTtc|number_format(2,',',' ') }} &euro; </a>
+                                        </div>
+                                        <p class="excerpt">{{ detail.description }}
+                                        </p>
+                                    </div>
+
+
+                                {% endfor %}
                                 </div>
-                                <div class="sp-widget__text">{{ detail.label }}<br/>
-                                    <small>{{ detail.description }}</small>
-                                </div>
-                            </div>
+                            </li>
+
                         {% endfor %}
-                    </div>
+                    </ul>
                 {% endblock %}
                 {% block panel_footer %}
                 {% endblock %}
@@ -69,27 +82,30 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
+
                 {% block panel_title %}
                     {{ 'customer_bundle.title_communications_edit_add'|trans }}
+                {% endblock %}
+                {% block panel_button %}
                     <a href="#" id="addCommunication" data-copy-form=".customerCommunications" data-after=".row:last"
-                       class="pull-right">+ Ajouter</a>{% endblock %}
+                       class="pull-right">+ Ajouter</a>
+                {% endblock %}
                 {% block panel_body %}
                     <div class="customerCommunications"
                          data-prototype="{%- filter escape -%}{{ include('@Customer/customer/prototypes/communication.html.twig', { 'form': form.customerCommunications.vars.prototype }) }}{%- endfilter -%}">
                         {% for f in form.customerCommunications %}
                             {{ include('@Customer/customer/prototypes/communication.html.twig', { 'form': f }) }}
                         {% endfor %}
-
-
                     </div>
                 {% endblock %}
                 {% block panel_footer %}<input type="submit" class="btn mt-2 btn-primary"
-                                               value="{{ 'customer_bundle.edit_add'|trans }}"/>{% endblock %}
+                                               value="{{ 'customer_bundle.edit_add'|trans }}"/>
+                {% endblock %}
             {% endembed %}
         </div>
         <div class="col-md-6">
-            {% embed '@Template/Default/includes/panel/complet.html.twig' %}
+            {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
                     {{ 'customer_bundle.title_adresses_edit_add'|trans }}
                 {% endblock %}

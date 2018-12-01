@@ -67,7 +67,7 @@
                                         role="button" aria-haspopup="true" aria-expanded="false"><i
                                 class="fa fa-power-off"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#">Deconnexion</a></li>
+                        <li><a href="{{ url('fos_user_security_logout') }}">Deconnexion</a></li>
                         <li></li>
                     </ul>
                 </li>
@@ -373,7 +373,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             {% endblock %}
                         </div>
                     </div>
@@ -434,7 +433,6 @@
             return false;
         });
         $(document).on('click', '.confirm', function () {
-
             return confirm('Etes vous certain(e) de vouloir continuer cette action ? ');
         });
     });

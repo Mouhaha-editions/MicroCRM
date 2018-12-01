@@ -124,19 +124,18 @@ class CustomerController extends Controller
             $this->addFlash('success', $t->trans('customer_bundle.success_edit_add'));
             return $this->redirectToRoute('customer_index');
         }
-        /** @var SalesDocumentDetail[] $details */
+        /** @var SalesDocument[] $details */
         $details = [];
         if($customer->getId() !== null){
-            $details = $this->getDoctrine()->getRepository('BillingBundle:SalesDocumentDetail')
-                ->createQueryBuilder('sdd')
-                ->leftJoin('sdd.salesDocument','sd')
-                ->orderBy('sdd.date', 'desc')
-                ->addOrderBy('sd.date','desc')
+            $details = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')
+                ->createQueryBuilder('sd')
+                ->leftJoin('sd.details','sdd')
+                ->orderBy('sd.id', 'desc')
                 ->where('sd.state IN (:states)')
                 ->andWhere('sd.customer = :customer')
                 ->setParameter('states', [SalesDocument::FACTURE, SalesDocument::BON_COMMANDE])
                 ->setParameter('customer', $customer)
-                ->setMaxResults(5)
+                ->setMaxResults(40)
                 ->setFirstResult(0)
             ->getQuery()->getResult();
         }
@@ -144,7 +143,7 @@ class CustomerController extends Controller
         return $this->render('@Customer/customer/edit.html.twig', array(
             'customer' => $customer,
             'form' => $editForm->createView(),
-            'details'=>$details
+            'salesDocuments'=>$details
         ));
     }
 
