@@ -248,5 +248,20 @@ class CrmController extends ControllerWithSettings
     {
         return $this->documentAction($request, $salesDocument, true);
     }
+
+    public function deleteAction(Request $request, SalesDocument $salesDocument = null)
+    {
+
+        foreach($salesDocument->getDetails() AS $detail){
+            $detail->setSalesDocument(null);
+            $this->getDoctrine()->getManager()->remove($detail);
+        }
+        $this->getDoctrine()->getManager()->remove($salesDocument);
+
+        $this->getDoctrine()->getManager()->flush($salesDocument);
+
+
+        return $this->redirectToRoute('crm_billing_salesdocument_index');
+    }
 }
 

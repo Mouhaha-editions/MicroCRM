@@ -18,6 +18,7 @@
   "dependencies": {
     "sweetalert2": "^7.26.29",
     "jquery-ui": "^1.12.1",
-    "bootstrap-datepicker": "^1.8.0"
+    "bootstrap-datepicker": "^1.8.0",
+    "gentelella": "^1.4.0"
   }
 }

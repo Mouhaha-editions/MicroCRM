@@ -7,6 +7,9 @@ crm_billing_salesdocument_new:
 crm_billing_salesdocument_edit:
     path:     /order/edit/{id}
     defaults: { _controller: "BillingBundle:Crm:edit" }
+crm_billing_salesdocument_delete:
+    path:     /order/delete/{id}
+    defaults: { _controller: "BillingBundle:Crm:delete" }
 
 crm_billing_salesdocument_document:
     path:     /order/doc/{id}

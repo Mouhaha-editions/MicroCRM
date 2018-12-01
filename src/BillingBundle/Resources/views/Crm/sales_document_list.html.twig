@@ -44,7 +44,7 @@
                                 {% else %}
                                     <td >
                                         <a class="chrono text-warning" href="{{ path('crm_billing_salesdocument_edit', {'id': facture.id}) }}">
-                                            Bon de commande
+                                            Brouillon
                                         </a>
                                     </td>
                                     {% endif %}
@@ -65,6 +65,9 @@
                                         <a href="{{ url('crm_billing_salesdocument_edit',{id:facture.id}) }}"
                                            class="btn btn-xs btn-warning "><i
                                                     class="fa fa-edit"></i></a>
+                                        <a href="{{ url('crm_billing_salesdocument_delete',{id:facture.id}) }}"
+                                           class="btn btn-xs btn-danger confirm "><i
+                                                    class="fa fa-trash"></i></a>
                                     {% else %}
                                         <a href="{{ url('crm_billing_salesdocument_document',{id:facture.id}) }}"
                                            title="Document .docx"
