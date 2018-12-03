@@ -159,6 +159,8 @@ class CustomerController extends Controller
             ->select(('DISTINCT c'))
             ->leftJoin('c.customer_communications', 'cc')
             ->leftJoin('c.customer_addresses', 'ca')
+            ->orderBy('c.lastName', 'ASC')
+            ->orderBy('c.firstName', 'ASC')
             ->getQuery()->getResult();
         $fileName = "export_clients_" . date("d_m_Y") . ".csv";
         $response = new StreamedResponse();
