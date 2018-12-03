@@ -172,6 +172,7 @@ class CustomerController extends Controller
                 'Nom',
                 utf8_decode('Prénom'),
                 'Date de naissance',
+                utf8_decode('Points fidelité'),
                 'Email',
                 'Mobile',
                 utf8_decode('Téléphone'),
@@ -188,7 +189,8 @@ class CustomerController extends Controller
                 fputcsv($handle, array(
                     utf8_decode($client->getLastName() ?: $client->getCompanyName()),
                     utf8_decode($client->getFirstName()),
-                    $client->getBirthday(),
+                    $client->getBirthday()->format('d/m/Y'),
+                    $client->getPointsFidelite(),
                     utf8_decode($client->getEmail()->getValue()),
                     $client->getMobile()->getValue(),
                     $client->getTelephone()->getValue(),
