@@ -6,18 +6,32 @@
 {% block body %}
 
     <div class="row tile_count">
-        <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+        <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-eur"></i> Compte en banque (réel)</span>
+            <div class="count">{{ account_reel|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">sans toutes les entrées et sorties prévues</span>
+        </div>
+
+        <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i
                         class="fa fa-eur"></i> Compte en banque</span>
             <div class="count">{{ account_theo|number_format(2,',',' ') }} &euro;</div>
             <span class="count_bottom">Avec toutes les entrées et sorties prévues</span>
         </div>
 
-        <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+
+        <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i
                         class="fa fa-eur"></i> Compte en banque</span>
-            <div class="count">{{ account_reel|number_format(2,',',' ') }} &euro;</div>
-            <span class="count_bottom">sans toutes les entrées et sorties prévues</span>
+            <div class="count">{{ account_theo_factures|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">avec entrées/sorties + factures/avoirs non payées </span>
+        </div>
+        <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-eur"></i> Compte en banque</span>
+            <div class="count">{{ account_theo_delire|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">avec entrées/sorties + factures/avoirs non payées + bons de commande </span>
         </div>
     </div>
     <div class="row">
@@ -47,7 +61,7 @@
                             <th style="width:10%">Date</th>
                             <th >Libellé</th>
                             <th style="" class="text-right">Montant</th>
-
+                            <th style="width:70px;" class=""></th>
                         </tr>
                         {% for payment in payments.entities %}
                             <tr class="{% if payment.date <= date('now') %}bg-success{% endif %}">
@@ -59,6 +73,10 @@
                                 </td>
                                 <td class="text-right {% if payment.amount > 0 %}text-success{% else %}text-danger{% endif %}">
                                     {% if payment.amount > 0 %}+{% endif %}{{ payment.amount|number_format(2,',',' ') }} &euro;
+                                </td>
+                                <td>
+                                    <a href="{{ url('account_payment_edit',{id:payment.id}) }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    <a href="{{ url('account_payment_delete',{id:payment.id}) }}" class="btn btn-xs btn-danger confirm"><i class="fa fa-trash"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}

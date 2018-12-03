@@ -4,6 +4,7 @@ namespace BillingBundle\Controller;
 
 
 use BillingBundle\Entity\Payment;
+use BillingBundle\Entity\SalesDocument;
 use BillingBundle\Form\PaymentType;
 use DateTime;
 use Pkshetlie\SettingsBundle\Controller\ControllerWithSettings;
@@ -45,8 +46,28 @@ class AccountController extends ControllerWithSettings
         $sum_theo = ($this->getDoctrine()->getRepository('BillingBundle:Payment')->createQueryBuilder('p')
             ->select('SUM(p.amount)')
             ->setFirstResult(0)->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult());;
+            ->getQuery()->getOneOrNullResult());
         $sum_theo = array_pop($sum_theo);
+
+        $sum_facture = ($this->getDoctrine()->getRepository('BillingBundle:SalesDocumentDetail')->createQueryBuilder('sdd')
+            ->leftJoin('sdd.salesDocument','sd')
+            ->select('SUM(sdd.total_amount_ttc * (CASE WHEN sd.state = '.SalesDocument::AVOIR.' THEN  -1 ELSE 1 END) )')
+            ->where('sd.state IN (:states)')
+            ->setParameter('states',[SalesDocument::FACTURE, SalesDocument::AVOIR])
+            ->andWhere('sd.isPaid = false')
+            ->setFirstResult(0)->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult());;
+        $sum_facture = array_pop($sum_facture);
+
+        $sum_all_doc = ($this->getDoctrine()->getRepository('BillingBundle:SalesDocumentDetail')->createQueryBuilder('sdd')
+            ->leftJoin('sdd.salesDocument','sd')
+            ->select('SUM(sdd.total_amount_ttc * (CASE WHEN sd.state = '.SalesDocument::AVOIR.' THEN  -1 ELSE 1 END) )')
+            ->where('sd.state IN (:states)')
+            ->setParameter('states',[SalesDocument::FACTURE, SalesDocument::BON_COMMANDE, SalesDocument::AVOIR])
+            ->andWhere('sd.isPaid = false')
+            ->setFirstResult(0)->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult());;
+        $sum_all_doc = array_pop($sum_all_doc);
 
         $sum_reel = $this->getDoctrine()->getRepository('BillingBundle:Payment')->createQueryBuilder('p')
             ->select('SUM(p.amount)')
@@ -60,6 +81,8 @@ class AccountController extends ControllerWithSettings
             'payments' => $payments,
             'search_form' => $form->createView(),
             'account_theo' => $account/100 + $sum_theo,
+            'account_theo_delire' => $account/100 + $sum_theo + $sum_all_doc,
+            'account_theo_factures' => $account/100 + $sum_theo + $sum_facture,
             'account_reel' => $account/100 + $sum_reel,
             'search_form' => $form->createView(),
         ]);
@@ -69,12 +92,13 @@ class AccountController extends ControllerWithSettings
     public function newAction(Request $request)
     {
         $payment = new Payment();
+        $payment->setDate(new DateTime());
+
         return $this->editAction($request, $payment);
     }
 
     public function editAction(Request $request, Payment $payment)
     {
-        $payment->setDate(new DateTime());
         $form = $this->createForm(PaymentType::class, $payment);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
@@ -89,7 +113,6 @@ class AccountController extends ControllerWithSettings
                 $this->addFlash('danger', "Erreur lors de la saisie");
             }
         }
-
 
         return $this->render('@Billing/Account/payment_form.html.twig', [
             'form' => $form->createView(),
