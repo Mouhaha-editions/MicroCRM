@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-6">
+            {% embed 'embeded/panel.html.twig' %}
+                {% block panel_title %}{{ 'billing_bundle.title_payment_edit_add'|trans }}{% endblock %}
+                {% block panel_body %}
+
+                    {{ form_row(form.label) }}
+                    {{ form_row(form.amount) }}
+                    {{ form_row(form.date) }}
+
+                {% endblock %}
+
+                {% block panel_footer %}
+                    {{ form_widget(form.Enregistrer) }}
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-md-6">
+            {% embed 'embeded/panel.html.twig' %}
+                {% block panel_title %}{{ 'billing_bundle.title_payment_explain'|trans }}{% endblock %}
+                {% block panel_body %}
+                    Alors ... c'est pas compliqué, si c'ets une entrée d'argent il faut mettre le montant en positif, si c'est une sortie d'argent il faut le mettre en négatif.<br/>
+                    Il ne faut pas entré les paiements des factures, c'ets déjà prévu quand on maruqe une facture  "payée"
+                    <br/><br/>
+                    On ne pouvait pas faire plus simple.
+                {% endblock %}
+
+                {% block panel_footer %}
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

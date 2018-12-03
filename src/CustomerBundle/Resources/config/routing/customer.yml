@@ -1,7 +1,9 @@
 customer_index:
     path:     /
     defaults: { _controller: "CustomerBundle:Customer:index" }
-
+customer_export:
+    path:     /export
+    defaults: { _controller: "CustomerBundle:Customer:export" }
 customer_show:
     path:     /{id}/show
     defaults: { _controller: "CustomerBundle:Customer:show" }

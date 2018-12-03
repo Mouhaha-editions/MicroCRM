@@ -1,0 +1,72 @@
+{% import '@Pagination/Pagination/macro.twig' as macro_page %}
+
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="row tile_count">
+        <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-eur"></i> Compte en banque</span>
+            <div class="count">{{ account_theo|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">Avec toutes les entrées et sorties prévues</span>
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+            <span class="count_top"><i
+                        class="fa fa-eur"></i> Compte en banque</span>
+            <div class="count">{{ account_reel|number_format(2,',',' ') }} &euro;</div>
+            <span class="count_bottom">sans toutes les entrées et sorties prévues</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% embed 'embeded/panel.html.twig' %}
+                {% block panel_title %}
+                    <h2>Entrées sorties d'argent</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a href="{{ url('account_payment_new') }}" class="pull-right">+ Nouveau</a>
+                        </li>
+                    </ul>
+                {% endblock %}
+                {% block panel_body %}
+                    {#{{ form_start(search_form) }}#}
+                    {#<div class="row">#}
+                        {#<div class="col-md-4">#}
+                            {#{{ form_widget(search_form.start_date) }}#}
+                        {#</div>#}
+                        {#<div class="col-md-4">#}
+                            {#{{ form_widget(search_form.Ok) }}#}
+                        {#</div>#}
+                    {#</div>#}
+                    {#{{ form_end(search_form) }}#}
+                    <table class="table table-condensed">
+                        <tr>
+                            <th style="width:10%">Date</th>
+                            <th >Libellé</th>
+                            <th style="" class="text-right">Montant</th>
+
+                        </tr>
+                        {% for payment in payments.entities %}
+                            <tr class="{% if payment.date <= date('now') %}bg-success{% endif %}">
+                                <td>
+                                    {{ payment.date.format('d/m/Y') }}
+                                </td>
+                                <td>
+                                    {{ payment.label }}
+                                </td>
+                                <td class="text-right {% if payment.amount > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if payment.amount > 0 %}+{% endif %}{{ payment.amount|number_format(2,',',' ') }} &euro;
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table><br/>
+
+                {% endblock %}
+            {% endembed %}
+            page: {{ macro_page.paginate(payments) }}
+        </div>
+    </div>
+{% endblock %}

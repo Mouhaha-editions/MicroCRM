@@ -1,0 +1,13 @@
+account_index:
+    path:     /
+    defaults: { _controller: "BillingBundle:Account:index" }
+account_payment_new:
+    path:     /payment/new
+    defaults: { _controller: "BillingBundle:Account:new" }
+account_payment_edit:
+    path:     /payment/edit/{id}
+    defaults: { _controller: "BillingBundle:Account:edit" }
+
+account_payment_delete:
+    path:     /payment/delete/{id}
+    defaults: { _controller: "BillingBundle:Account:delete" }

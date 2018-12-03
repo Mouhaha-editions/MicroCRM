@@ -56,7 +56,7 @@ class Customer
      *
      * @ORM\Column(name="points_fidelite", type="integer", nullable=false)
      */
-    private $points_fidelite = 0 ;
+    private $points_fidelite = 0;
 
     /**
      * @var string
@@ -311,7 +311,7 @@ class Customer
     /**
      * Get customerCommunications
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection| CustomerCommunication[]
      */
     public function getCustomerCommunications()
     {
@@ -407,5 +407,52 @@ class Customer
     public function getPointsFidelite()
     {
         return $this->points_fidelite;
+    }
+
+    /**
+     * @return CustomerAddress
+     */
+    public function getAddresse()
+    {
+        return $this->getCustomerAddresses()->count() > 0 ? $this->getCustomerAddresses()->get(0) : new CustomerAddress();
+    }
+
+    /**
+     * @return CustomerCommunication
+     */
+    public function getEmail()
+    {
+        foreach ($this->getCustomerCommunications() AS $communication) {
+            if ($communication->getCustomerCommunicationType() == ECustomerCommunicationType::EMAIL) {
+                return $communication;
+            }
+        }
+        return new CustomerCommunication();
+    }
+
+    /**
+     * @return CustomerCommunication
+     */
+    public function getMobile()
+    {
+        foreach ($this->getCustomerCommunications() AS $communication) {
+            if ($communication->getCustomerCommunicationType() == ECustomerCommunicationType::MOBILE) {
+                return $communication;
+            }
+        }
+        return new CustomerCommunication();
+    }
+
+    /**
+     * @return CustomerCommunication
+     */
+    public function getTelephone()
+    {
+        foreach ($this->getCustomerCommunications() AS $communication) {
+            if ($communication->getCustomerCommunicationType() == ECustomerCommunicationType::TELEPHONE) {
+                return $communication;
+            }
+        }
+        return new CustomerCommunication();
     }
 }

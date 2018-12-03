@@ -119,7 +119,7 @@ class CrmController extends ControllerWithSettings
     public function tooglePaidAction(Request $request, SalesDocument $sd)
     {
         $this->get('facturation.service')->toogleIsPaid($sd);
-        return new JsonResponse(['success'=>true]);
+        return new JsonResponse(['success' => true]);
     }
 
     public function editAction(Request $request, SalesDocument $salesDocument)
@@ -224,7 +224,7 @@ class CrmController extends ControllerWithSettings
 
             if ($pdf) {
                 $docxfile = $file;
-                \PhpOffice\PhpWord\Settings::setPdfRendererPath($dir.'/vendor/dompdf/dompdf/src');
+                \PhpOffice\PhpWord\Settings::setPdfRendererPath($dir . '/vendor/dompdf/dompdf/src');
                 \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
                 $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.pdf';
                 $temp = \PhpOffice\PhpWord\IOFactory::load($docxfile);
@@ -251,8 +251,7 @@ class CrmController extends ControllerWithSettings
 
     public function deleteAction(Request $request, SalesDocument $salesDocument = null)
     {
-
-        foreach($salesDocument->getDetails() AS $detail){
+        foreach ($salesDocument->getDetails() AS $detail) {
             $detail->setSalesDocument(null);
             $this->getDoctrine()->getManager()->remove($detail);
         }
@@ -262,6 +261,19 @@ class CrmController extends ControllerWithSettings
 
 
         return $this->redirectToRoute('crm_billing_salesdocument_index');
+    }
+
+    public function editAccount(Request $request)
+    {
+        $form = $this->createFormBuilder();
+        $form->add('amount');
+
+        $form = $form->getForm();
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+
+        }
     }
 }
 

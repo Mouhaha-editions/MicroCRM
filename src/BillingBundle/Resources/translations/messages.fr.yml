@@ -3,8 +3,18 @@ billing_bundle:
   title_sales_document_edit_add: 'Ajouter/Modifier un document'
   title_sales_document_details: 'Détails'
   title_sales_document_facultatif: 'Facultatif'
+  title_payment_edit_add: 'Ajouter/Modifier un paiement'
+  title_payment_explain: 'Explications'
 
-
+payment:
+  placeholder:
+    amount: en €, pas en patates
+    label: blabla..
+    date: date
+  label:
+    label: Libellé
+    amount: Montant
+    date: une date d'effet
 sales_document_product:
   label:
       label: 'Libellé'

@@ -14,6 +14,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Customer controller.
@@ -30,15 +35,14 @@ class CustomerController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createFormBuilder(null, ['method'=>'get']);
-        $form->add('search', TextType::class,['required'=>false]);
+        $form = $this->createFormBuilder(null, ['method' => 'get']);
+        $form->add('search', TextType::class, ['required' => false]);
         $form->add('Ok', SubmitType::class);
         $form = $form->getForm();
         $form->handleRequest($request);
-        $qb = $em->getRepository('CustomerBundle:Customer')->createQueryBuilder('c')
-        ;
+        $qb = $em->getRepository('CustomerBundle:Customer')->createQueryBuilder('c');
 
-        if($form->get('search')->getNormData()){
+        if ($form->get('search')->getNormData()) {
             $qb->leftJoin('c.customer_addresses', 'a');
             $qb->leftJoin('c.customer_communications', 'cc');
             $qb->where('c.companyName LIKE :search')
@@ -48,11 +52,11 @@ class CustomerController extends Controller
                 ->orWhere('cc.value LIKE :search')
                 ->orWhere('a.ville LIKE :search')
                 ->orWhere('a.codePostal LIKE :search')
-                ->setParameter('search', $form->get('search')->getNormData().'%');
+                ->setParameter('search', $form->get('search')->getNormData() . '%');
 
             $qb->groupBy('c.id');
         }
-        $pagination = $this->get('pkshetlie.pagination')->process($qb,$request);
+        $pagination = $this->get('pkshetlie.pagination')->process($qb, $request);
 
         return $this->render('@Customer/customer/index.html.twig', array(
             'customers' => $pagination,
@@ -112,8 +116,8 @@ class CustomerController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
             /** @var CustomerCommunication $com */
-            foreach($customer->getCustomerCommunications() AS $com){
-                if($com->getCustomerCommunicationType() == null && $com->getValue() == null){
+            foreach ($customer->getCustomerCommunications() AS $com) {
+                if ($com->getCustomerCommunicationType() == null && $com->getValue() == null) {
                     $customer->removeCustomerCommunication($com);
                 }
             }
@@ -126,10 +130,10 @@ class CustomerController extends Controller
         }
         /** @var SalesDocument[] $details */
         $details = [];
-        if($customer->getId() !== null){
+        if ($customer->getId() !== null) {
             $details = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')
                 ->createQueryBuilder('sd')
-                ->leftJoin('sd.details','sdd')
+                ->leftJoin('sd.details', 'sdd')
                 ->orderBy('sd.id', 'desc')
                 ->where('sd.state IN (:states)')
                 ->andWhere('sd.customer = :customer')
@@ -137,14 +141,73 @@ class CustomerController extends Controller
                 ->setParameter('customer', $customer)
                 ->setMaxResults(40)
                 ->setFirstResult(0)
-            ->getQuery()->getResult();
+                ->getQuery()->getResult();
         }
 
         return $this->render('@Customer/customer/edit.html.twig', array(
             'customer' => $customer,
             'form' => $editForm->createView(),
-            'salesDocuments'=>$details
+            'salesDocuments' => $details
         ));
+    }
+
+    public function exportAction()
+    {
+        /** @var Customer[] $clients */
+        $clients = $this->getDoctrine()->getRepository('CustomerBundle:Customer')
+            ->createQueryBuilder('c')
+            ->select(('DISTINCT c'))
+            ->leftJoin('c.customer_communications', 'cc')
+            ->leftJoin('c.customer_addresses', 'ca')
+            ->getQuery()->getResult();
+        $fileName = "export_clients_" . date("d_m_Y") . ".csv";
+        $response = new StreamedResponse();
+
+
+        $response->setCallback(function () use ($clients) {
+            $handle = fopen('php://output', 'w+');
+
+            // Nom des colonnes du CSV
+            fputcsv($handle, array(
+                'Nom',
+                utf8_decode('Prénom'),
+                'Date de naissance',
+                'Email',
+                'Mobile',
+                utf8_decode('Téléphone'),
+                'Adresse 1',
+                'Adresse 2',
+                'Code Postal',
+                'Ville',
+            ), ';');
+
+            //Champs
+            foreach ($clients as $index => $client) {
+                $address = $client->getAddresse();
+                //dump($client);die();
+                fputcsv($handle, array(
+                    utf8_decode($client->getLastName() ?: $client->getCompanyName()),
+                    utf8_decode($client->getFirstName()),
+                    $client->getBirthday(),
+                    utf8_decode($client->getEmail()->getValue()),
+                    $client->getMobile()->getValue(),
+                    $client->getTelephone()->getValue(),
+                    utf8_decode($address->getLigne1()),
+                    utf8_decode($address->getLigne2()),
+                    $address->getCodePostal(),
+                    utf8_decode($address->getVille()),
+                ), ';');
+            }
+            fclose($handle);
+        });
+
+
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8', 'application/force-download');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
+
+
+        return $response;
     }
 
     /**

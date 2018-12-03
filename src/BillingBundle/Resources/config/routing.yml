@@ -1,3 +1,6 @@
 crm_utilisateur:
     resource: "@BillingBundle/Resources/config/routing/crm.yml"
     prefix:   /billing/
+account:
+    resource: "@BillingBundle/Resources/config/routing/account.yml"
+    prefix:   /account/

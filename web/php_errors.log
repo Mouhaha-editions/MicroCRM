@@ -1,1 +1,29 @@
 [15-Nov-2018 22:38:19 Europe/Paris] PHP Fatal error:  Cannot redeclare BillingBundle\Entity\SalesDocument::removeDetail() in F:\var\www\dev_project\src\BillingBundle\Entity\SalesDocument.php on line 254
+[03-Dec-2018 21:38:22 Europe/Paris] PHP Warning:  Uncaught Symfony\Component\Debug\Exception\ContextErrorException: Catchable Fatal Error: Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php:198
+Stack trace:
+#0 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\StreamedResponse.php(114): CustomerBundle\Controller\CustomerController->CustomerBundle\Controller\{closure}()
+#1 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\Response.php(373): Symfony\Component\HttpFoundation\StreamedResponse->sendContent()
+#2 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpKernel\EventListener\StreamedResponseListener.php(39): Symfony\Component\HttpFoundation\Response->send()
+#3 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\EventDispatcher\Debug\WrappedListener.php(104): Symfony\Component\HttpKernel\EventListener\StreamedResponseListener->onKernelRes in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:22 Europe/Paris] PHP Fatal error:  Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:22 Europe/Paris] PHP Warning:  Uncaught Symfony\Component\Debug\Exception\ContextErrorException: Catchable Fatal Error: Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php:198
+Stack trace:
+#0 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\StreamedResponse.php(114): CustomerBundle\Controller\CustomerController->CustomerBundle\Controller\{closure}()
+#1 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\Response.php(373): Symfony\Component\HttpFoundation\StreamedResponse->sendContent()
+#2 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpKernel\EventListener\StreamedResponseListener.php(39): Symfony\Component\HttpFoundation\Response->send()
+#3 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\EventDispatcher\Debug\WrappedListener.php(104): Symfony\Component\HttpKernel\EventListener\StreamedResponseListener->onKernelRes in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:22 Europe/Paris] PHP Fatal error:  Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:28 Europe/Paris] PHP Warning:  Uncaught Symfony\Component\Debug\Exception\ContextErrorException: Catchable Fatal Error: Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php:198
+Stack trace:
+#0 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\StreamedResponse.php(114): CustomerBundle\Controller\CustomerController->CustomerBundle\Controller\{closure}()
+#1 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\Response.php(373): Symfony\Component\HttpFoundation\StreamedResponse->sendContent()
+#2 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpKernel\EventListener\StreamedResponseListener.php(39): Symfony\Component\HttpFoundation\Response->send()
+#3 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\EventDispatcher\Debug\WrappedListener.php(104): Symfony\Component\HttpKernel\EventListener\StreamedResponseListener->onKernelRes in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:28 Europe/Paris] PHP Fatal error:  Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:59 Europe/Paris] PHP Warning:  Uncaught Symfony\Component\Debug\Exception\ContextErrorException: Catchable Fatal Error: Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php:198
+Stack trace:
+#0 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\StreamedResponse.php(114): CustomerBundle\Controller\CustomerController->CustomerBundle\Controller\{closure}()
+#1 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpFoundation\Response.php(373): Symfony\Component\HttpFoundation\StreamedResponse->sendContent()
+#2 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\HttpKernel\EventListener\StreamedResponseListener.php(39): Symfony\Component\HttpFoundation\Response->send()
+#3 F:\var\www\dev_project\vendor\symfony\symfony\src\Symfony\Component\EventDispatcher\Debug\WrappedListener.php(104): Symfony\Component\HttpKernel\EventListener\StreamedResponseListener->onKernelRes in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
+[03-Dec-2018 21:38:59 Europe/Paris] PHP Fatal error:  Object of class CustomerBundle\Entity\CustomerCommunication could not be converted to string in F:\var\www\dev_project\src\CustomerBundle\Controller\CustomerController.php on line 198
