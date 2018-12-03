@@ -189,14 +189,14 @@ class CustomerController extends Controller
                 fputcsv($handle, array(
                     utf8_decode($client->getLastName() ?: $client->getCompanyName()),
                     utf8_decode($client->getFirstName()),
-                    $client->getBirthday()->format('d/m/Y'),
+                    $client->getBirthday()? $client->getBirthday()->format('d/m/Y'):'',
                     $client->getPointsFidelite(),
                     utf8_decode($client->getEmail()->getValue()),
-                    $client->getMobile()->getValue(),
-                    $client->getTelephone()->getValue(),
+                    "\t".$client->getMobile()->getValue(),
+                    "\t".$client->getTelephone()->getValue(),
                     utf8_decode($address->getLigne1()),
                     utf8_decode($address->getLigne2()),
-                    $address->getCodePostal(),
+                    "\t".$address->getCodePostal(),
                     utf8_decode($address->getVille()),
                 ), ';');
             }
