@@ -171,6 +171,7 @@ class CustomerController extends Controller
 
             // Nom des colonnes du CSV
             fputcsv($handle, array(
+                'Reference',
                 'Nom',
                 utf8_decode('Prénom'),
                 'Date de naissance',
@@ -189,6 +190,7 @@ class CustomerController extends Controller
                 $address = $client->getAddresse();
                 //dump($client);die();
                 fputcsv($handle, array(
+                    $client->getId(),
                     utf8_decode($client->getLastName() ?: $client->getCompanyName()),
                     utf8_decode($client->getFirstName()),
                     $client->getBirthday()? $client->getBirthday()->format('d/m/Y'):'',
