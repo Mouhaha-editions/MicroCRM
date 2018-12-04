@@ -77,13 +77,23 @@
                                 </ul>
                             </li>
                             <li class="{% if app.request.get('_route') starts with 'account_' %}active{% endif %}">
-                                <a><i class="fa fa-bank"></i> Banque <span class="fa fa-chevron-down"></span></a>
+                                <a><i class="fa fa-money"></i> Compte pro <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu {% if app.request.get('_route') starts with 'account_index' %}active{% endif %}">
                                     <li {% if app.request.get('_route') starts with 'account_index' %}class="active"{% endif %}>
                                         <a href="{{ url('account_index') }}">Entrées/Sorties</a></li>
                                     <li {% if app.request.get('_route') starts with 'account_payment_new' %}class="active"{% endif %}>
                                         <a href="{{ url('account_payment_new') }}">Ajouter paiement</a>
                                     </li>
+                                </ul>
+                            </li>
+                            <li class="{% if app.request.get('_route') starts with 'bank_' %}active{% endif %}">
+                                <a><i class="fa fa-bank"></i> Banque <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu {% if app.request.get('_route') starts with 'bank_account' %}active{% endif %}">
+                                    <li {% if app.request.get('_route') starts with 'bank_account_index' %}class="active"{% endif %}>
+                                        <a href="{{ url('bank_account_index') }}">Mes comptes</a></li>
+                                    {#<li {% if app.request.get('_route') starts with 'account_payment_new' %}class="active"{% endif %}>#}
+                                        {#<a href="{{ url('account_payment_new') }}">Ajouter paiement</a>#}
+                                    {#</li>#}
                                 </ul>
                             </li>
                             <li class="{% if app.request.get('_route') starts with 'changelog' %}active{% endif %}">

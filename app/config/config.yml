@@ -9,6 +9,7 @@ imports:
     - { resource: "@PaginationBundle/Resources/config/services.yml" }
     - { resource: "@SettingsBundle/Resources/config/services.yml" }
     - { resource: "@CoreBundle/Resources/config/services.yml" }
+    - { resource: "@BankBundle/Resources/config/services.yml" }
 #    - { resource: "@GoogleBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
