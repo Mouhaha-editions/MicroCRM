@@ -1,4 +1,4 @@
 bank_account:
     resource: "@BankBundle/Resources/config/routing/account.yml"
-    prefix:   /account
+    prefix:   /bank/account
 
