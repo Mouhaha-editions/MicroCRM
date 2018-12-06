@@ -36,7 +36,8 @@ class AccountController extends Controller
     public function newAction(Request $request)
     {
         $account = new Account();
-     return $this->editAction($request, $account);
+
+        return $this->editAction($request, $account);
     }
 
     /**

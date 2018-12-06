@@ -44,7 +44,7 @@ class Account
 
     public function __construct()
     {
-        $this->operations = new Account();
+        $this->operations = new ArrayCollection();
     }
 
     /**
