@@ -15,7 +15,10 @@
                     {% block panel_body %}
                         <div class="text-center">
                             {{ account.description }}<br/>
-                            <a href="">Ouvrir</a>
+                            {% set amount = service_bank_account.amountPointed(account) %}
+                            {% set amount = amount is null ? 0 : amount %}
+                            <b class="text-{% if amount > 0 %}success{% else %}danger{% endif %}">{{ amount|number_format(2,',',' ') }} &euro;</b><br/>
+                            <a href="{{ url('bank_operation_index',{id:account.id}) }}">Ouvrir</a>
                         </div>
                     {% endblock %}
                 {% endembed %}

@@ -14,8 +14,8 @@
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 /vendor/
-/web/bundles/
-/web/vendor/
+/web/bundles/*
+/web/vendor/*
 /.idea
 /src/BillingBundle/Resources/word/*
 /src/BillingBundle/Resources/factures/*

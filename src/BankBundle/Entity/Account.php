@@ -2,13 +2,13 @@
 
 namespace BankBundle\Entity;
 
+use BankBundle\Controller\OperationCategoryController;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- *
- *
  * @ORM\Table(name="account")
- * @ORM\Entity(repositoryClass="BillingBundle\Repository\PaymentRepository")
+ * @ORM\Entity(repositoryClass="BankBundle\Repository\AccountRepository")
  */
 class Account
 {
@@ -35,6 +35,17 @@ class Account
      */
     private $description;
 
+    /**
+     * @var Operation[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="BankBundle\Entity\Operation",mappedBy="account")
+     */
+    private $operations = false;
+
+    public function __construct()
+    {
+        $this->operations = new Account();
+    }
 
     /**
      * Get id.
@@ -92,5 +103,41 @@ class Account
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Add operation.
+     *
+     * @param \BankBundle\Entity\Operation $operation
+     *
+     * @return Account
+     */
+    public function addOperation(Operation $operation)
+    {
+        $this->operations[] = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Remove operation.
+     *
+     * @param \BankBundle\Entity\Operation $operation
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeOperation(Operation $operation)
+    {
+        return $this->operations->removeElement($operation);
+    }
+
+    /**
+     * Get operations.
+     *
+     * @return Operation[]
+     */
+    public function getOperations()
+    {
+        return $this->operations;
     }
 }

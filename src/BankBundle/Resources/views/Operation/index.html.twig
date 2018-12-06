@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            {% embed 'embeded/panel.html.twig' %}
+                {% block panel_title %}
+                    {{ account.label }}
+                    <small>{{ account.description }}</small>
+                {% endblock %}
+                {% block panel_button %}
+                    <a class="text-right" href="{{ url('bank_operation_new',{id:account.id}) }}">Ajouter</a>
+                {% endblock %}
+                {% block panel_body %}
+                    <table class="table">
+                        <tr>
+                            <th>Date</th>
+                            <th>Label</th>
+                            <th>Categorie</th>
+                            <th>Tiers</th>
+                            <th>Montant</th>
+                            <th>Pointé ?</th>
+                            <th></th>
+                        </tr>
+                        {% for operation in operations.entities %}
+                            <tr>
+                                <td>{{ operation.date.format('d/m/Y') }}</td>
+                                <td>{{ operation.label }}</td>
+                                <td>{{ operation.category.label }}</td>
+                                <td>{{ operation.tiers.label }}</td>
+                                <td class="text-right bold text-{% if operation.amount > 0 %}success{% else %}danger{% endif %}">{{ operation.amount }}</td>
+                                <td><a href="#" class="btn btn-xs btn-success"><i class="fa fa-check"></i></a></td>
+                                <td>
+                                    <a href="{{ url('bank_operation_edit',{id:operation.id}) }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    <a href="{{ url('bank_operation_delete',{id:operation.id}) }}" class="btn btn-xs confirm btn-danger"><i class="fa fa-trash"></i></a>
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}

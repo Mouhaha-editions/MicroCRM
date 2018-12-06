@@ -22,7 +22,6 @@ class AppKernel extends Kernel
             new Pkshetlie\SettingsBundle\SettingsBundle(),
             new FOS\UserBundle\FOSUserBundle(),
 
-//            new GoogleBundle\GoogleBundle(),
             new CustomerBundle\CustomerBundle(),
             new DashboardBundle\DashboardBundle(),
             new BillingBundle\BillingBundle(),

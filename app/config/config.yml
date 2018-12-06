@@ -45,6 +45,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
+        service_bank_account: '@bank.account'
         service_version: '@version'
         service_settings: '@pkshetlie.settings'
     form_themes:
