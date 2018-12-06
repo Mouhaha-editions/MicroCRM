@@ -61,10 +61,10 @@ class OperationController extends Controller
     public function editAction(Request $request, Operation $operation)
     {
         $form = $this->createForm(OperationType::class, $operation);
-        $form->get('category')->setData($operation->getCategory()->getId());
-        $form->get('category_text')->setData($operation->getCategory()->getLabel());
-        $form->get('tiers')->setData($operation->getCategory()->getId());
-        $form->get('tiers_text')->setData($operation->getCategory()->getLabel());
+        $form->get('category')->setData($operation->getCategory() != null ? $operation->getCategory()->getId():'');
+        $form->get('category_text')->setData($operation->getCategory() ?$operation->getCategory()->getLabel():'');
+        $form->get('tiers')->setData($operation->getTiers() !== null ?$operation->getTiers()->getId():'');
+        $form->get('tiers_text')->setData($operation->getTiers() != null? $operation->getTiers()->getLabel():'');
 
         $form->handleRequest($request);
 
