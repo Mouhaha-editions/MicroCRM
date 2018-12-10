@@ -10,7 +10,11 @@ namespace BankBundle\Service;
 
 
 use BankBundle\Entity\Account;
+use BankBundle\Entity\Operation;
+use BankBundle\Entity\OperationCategory;
+use BankBundle\Entity\Recurrence;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Validator\Constraints\Date;
 
 class AccountService
 {
@@ -36,11 +40,87 @@ class AccountService
             ->select('SUM(o.amount)')
             ->where('o.pointed = :true')
             ->andWhere('o.account = :account')
+            ->andWhere('o.deleted = :false')
             ->setParameter('account', $account)
             ->setParameter('true', true)
+            ->setParameter('false', false)
             ->setMaxResults(1)
             ->setFirstResult(0)
             ->getQuery()->getOneOrNullResult();
         return array_pop($count);
+    }
+
+    /**
+     * @param Account $account
+     * @param \DateTime $dateTime
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getAmountToDate(Account $account, \DateTime $dateTime)
+    {
+        $count = $this->em->getRepository('BankBundle:Operation')
+            ->createQueryBuilder('o')
+            ->select('SUM(o.amount)')
+            ->where('o.date <= :date')
+            ->andWhere('o.account = :account')
+            ->andWhere('o.deleted = :false')
+            ->setParameter('account', $account)
+            ->setParameter('date', $dateTime)
+            ->setParameter('false', false)
+            ->setMaxResults(1)
+            ->setFirstResult(0)
+            ->getQuery()->getOneOrNullResult();
+        return array_pop($count);
+    }
+    public function generateRecurrencesForAccount(Account $account, \DateTime $to)
+    {
+        foreach ($account->getRecurrences() AS $recurrence){
+            $this->generateRecurrence($recurrence, $to);
+        }
+    }
+
+
+    public function generateRecurrence(Recurrence $recurrence, \DateTime $to)
+    {
+        $type = $recurrence->getType();
+        $modify = "+1 Days";
+        switch ($type) {
+            case Recurrence::TYPE_DAY:
+                $modify = '+' . $recurrence->getEach() . ' days';
+                break;
+            case Recurrence::TYPE_MONTH:
+                $modify = '+' . $recurrence->getEach() . ' months';
+                break;
+            case Recurrence::TYPE_YEAR:
+                $modify = '+' . $recurrence->getEach() . ' years';
+                break;
+        }
+        $start = clone $recurrence->getStartDate();
+        $end = clone $to;
+        while ($start <= $end ) {
+            if($recurrence->getEndDate() != null && $start > $recurrence->getEndDate() ){
+                break;
+            }
+            $operation = $this->em->getRepository('BankBundle:Operation')
+                ->createQueryBuilder('o')
+                ->where('o.date = :thisone')
+                ->setParameter('thisone', $start)
+                ->setParameter('recurrence', $recurrence)
+                ->andWhere('o.recurrence = :recurrence')
+                ->getQuery()->getResult();
+            if ($operation == null) {
+                $operation = new Operation();
+                $operation->setTiers($recurrence->getTiers());
+                $operation->setCategory($recurrence->getCategory());
+                $operation->setLabel($recurrence->getLabel());
+                $operation->setAccount($recurrence->getAccount());
+                $operation->setRecurrence($recurrence);
+                $operation->setAmount($recurrence->getAmount());
+                $operation->setDate(clone $start);
+                $this->em->persist($operation);
+                $this->em->flush();
+            }
+            $start->modify($modify);
+        }
     }
 }

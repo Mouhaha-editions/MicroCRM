@@ -1,0 +1,10 @@
+recurrence:
+  label:
+    category_text: Categorie
+    label: Libellé
+    tiers_text: Tiers
+    each: Tous les
+    type: ""
+    amount: Montant
+    startDate: Du
+    endDate: Au

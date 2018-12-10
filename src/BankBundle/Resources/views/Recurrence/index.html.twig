@@ -1,38 +1,6 @@
 {% extends 'base.html.twig' %}
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
-    <div class="row tile_count">
-        <div class="col-md-6">
-            {% embed 'embeded/panel.html.twig' %}
-                {% block panel_title %}
-                    Voir
-                {% endblock %}
-                {% block panel_body %}
-                    <div class="row">
-                        {{ form_start(form) }}
-                        <div class="col-md-4">{{ form_row(form.startDate) }}</div>
-                        <div class="col-md-4">{{ form_row(form.endDate) }}</div>
-                        <div class="col-md-4">{{ form_row(form.voir) }}</div>
-                        {{ form_end(form) }}
-                    </div>
-                {% endblock %}
-            {% endembed %}
-        </div>
-        <div class="col-md-3 col-xs-6 tile_stats_count">
-            <span class="count_top"><i class="fa fa-eur"></i> Estimation</span>
-            {% set esti_1 = service_bank_account.getAmountPointed(account) %}
-            <div class="count {% if esti_1 > 0 %}green{% else %}red{% endif %}">{{ esti_1|number_format(2,',',' ') }} €</div>
-            <span class="count_bottom">il n'y a que les pointées</span>
-        </div>
-        <div class="col-md-3 col-xs-6 tile_stats_count">
-            <span class="count_top"><i class="fa fa-eur"></i> Estimation</span>
-            {% set esti_2 = service_bank_account.getAmountToDate(account,form.endDate.vars.data) %}
-            <div class="count {% if esti_2 > 0 %}green{% else %}red{% endif %}">{{ esti_2|number_format(2,',',' ') }} €</div>
-            <span class="count_bottom">Tout, jusqu'a la date du : {{ form.endDate.vars.data.format('d/m/Y') }}</span>
-        </div>
-
-    </div>
     <div class="row">
         <div class="col-md-8">
             {% embed 'embeded/panel.html.twig' %}
@@ -79,9 +47,6 @@
                         {% endfor %}
 
                     </table>
-                    {% import '@Pagination/Pagination/macro.twig' as macro_page %}
-                    page: {{ macro_page.paginate(operations) }}
-
                 {% endblock %}
             {% endembed %}
         </div>
@@ -106,12 +71,13 @@
                             <tr>
                                 <td>{{ recurrence.label }}</td>
                                 <td>{{ recurrence.startDate.format('d/m/Y') }}</td>
-                                <td>{{ recurrence.endDate is null ? "infini":recurrence.endDate.format('d/m/Y') }}</td>
+                                <td>{{ recurrence.endDate.format('d/m/Y') }}</td>
                                 <td class="text-right">{{ recurrence.amount|number_format(2,',',' ') }} &euro;</td>
-                                <td class="text-right">
-                                    <a href="{{ url('bank_recurrence_edit',{id:recurrence.id}) }}"
+                                <td><a href="#" class="btn btn-xs btn-success"><i class="fa fa-check"></i></a></td>
+                                <td>
+                                    <a href="{{ url('bank_recurrence_edit',{id:operation.id}) }}"
                                        class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
-                                    <a href="{{ url('bank_recurrence_delete',{id:recurrence.id}) }}"
+                                    <a href="{{ url('bank_recurrence_delete',{id:operation.id}) }}"
                                        class="btn btn-xs confirm btn-danger"><i class="fa fa-trash"></i></a>
 
                                 </td>

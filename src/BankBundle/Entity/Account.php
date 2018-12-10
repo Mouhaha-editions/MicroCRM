@@ -40,11 +40,19 @@ class Account
      *
      * @ORM\OneToMany(targetEntity="BankBundle\Entity\Operation",mappedBy="account")
      */
-    private $operations = false;
+    private $operations;
+
+    /**
+     * @var Recurrence[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="BankBundle\Entity\Recurrence",mappedBy="account")
+     */
+    private $recurrences ;
 
     public function __construct()
     {
         $this->operations = new ArrayCollection();
+        $this->recurrences = new ArrayCollection();
     }
 
     /**
@@ -139,5 +147,41 @@ class Account
     public function getOperations()
     {
         return $this->operations;
+    }
+
+    /**
+     * Add recurrence.
+     *
+     * @param \BankBundle\Entity\Recurrence $recurrence
+     *
+     * @return Account
+     */
+    public function addRecurrence(Recurrence $recurrence)
+    {
+        $this->recurrences[] = $recurrence;
+
+        return $this;
+    }
+
+    /**
+     * Remove recurrence.
+     *
+     * @param \BankBundle\Entity\Recurrence $recurrence
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeRecurrence(Recurrence $recurrence)
+    {
+        return $this->recurrences->removeElement($recurrence);
+    }
+
+    /**
+     * Get recurrences.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRecurrences()
+    {
+        return $this->recurrences;
     }
 }

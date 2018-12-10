@@ -2,6 +2,7 @@
 namespace BankBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +19,13 @@ class OperationType extends AbstractType
 
         $builder
             ->add('label')
-            ->add('date')
+            ->add('date', DateType::class, [
+                'format' => DateType::HTML5_FORMAT,
+                'widget' => 'single_text',
+                'required' => true,
+                'attr' => ['placeholder' => "operation.placeholder.date"],
+                'label' => 'operation.placeholder.date'
+            ])
             ->add('category',HiddenType::class,['mapped'=>false])
             ->add('category_text',TextType::class,['mapped'=>false])
             ->add('tiers_text',TextType::class,['mapped'=>false])

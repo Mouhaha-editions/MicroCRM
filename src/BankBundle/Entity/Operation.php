@@ -49,6 +49,13 @@ class Operation
     /**
      * @var boolean
      *
+     * @ORM\Column(name="deleted", type="boolean", nullable=false)
+     */
+    private $deleted = false;
+
+    /**
+     * @var boolean
+     *
      * @ORM\Column(name="pointed", type="boolean", nullable=false)
      */
     private $pointed = false;
@@ -76,7 +83,13 @@ class Operation
      * @ORM\JoinColumn(name="operation_tiers_id",nullable=false)
      */
     private $tiers;
-
+    /**
+     * @var Recurrence
+     *
+     * @ORM\ManyToOne(targetEntity="BankBundle\Entity\Recurrence",inversedBy="operations")
+     * @ORM\JoinColumn(name="recurrence_id",nullable=true)
+     */
+    private $recurrence;
 
     /**
      * Get id.
@@ -167,7 +180,7 @@ class Operation
      *
      * @return Operation
      */
-    public function setAccount(\BankBundle\Entity\Account $account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 
@@ -191,7 +204,7 @@ class Operation
      *
      * @return Operation
      */
-    public function setCategory(\BankBundle\Entity\OperationCategory $category)
+    public function setCategory(OperationCategory $category)
     {
         $this->category = $category;
 
@@ -215,7 +228,7 @@ class Operation
      *
      * @return Operation
      */
-    public function setTiers(\BankBundle\Entity\OperationTiers $tiers)
+    public function setTiers(OperationTiers $tiers)
     {
         $this->tiers = $tiers;
 
@@ -278,5 +291,53 @@ class Operation
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set recurrence.
+     *
+     * @param Recurrence|null $recurrence
+     *
+     * @return Operation
+     */
+    public function setRecurrence(Recurrence $recurrence = null)
+    {
+        $this->recurrence = $recurrence;
+
+        return $this;
+    }
+
+    /**
+     * Get recurrence.
+     *
+     * @return Recurrence|null
+     */
+    public function getRecurrence()
+    {
+        return $this->recurrence;
+    }
+
+    /**
+     * Set deleted.
+     *
+     * @param bool $deleted
+     *
+     * @return Operation
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Get deleted.
+     *
+     * @return bool
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
     }
 }

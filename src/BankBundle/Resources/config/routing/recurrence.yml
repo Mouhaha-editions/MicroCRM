@@ -1,0 +1,12 @@
+bank_recurrence_new:
+    path:     /{id}/new
+    defaults: { _controller: "BankBundle:Recurrence:new" }
+    methods:  [GET, POST]
+bank_recurrence_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "BankBundle:Recurrence:edit" }
+    methods:  [GET, POST]
+bank_recurrence_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "BankBundle:Recurrence:delete" }
+    methods:  [GET, POST]

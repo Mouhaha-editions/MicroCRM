@@ -6,7 +6,7 @@
         <div class="col-md-6">
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
-                    Ajouter/Modifier une operation
+                    Ajouter/Modifier une récurrence
                 {% endblock %}
                 {% block panel_body %}
                     {{ form_start(form) }}
@@ -32,13 +32,13 @@
                 getValue: 'label',
                 list: {
                     onChooseEvent: function () {
-                        var elt = $("#bankbundle_operation_category_text");
-                        var elt_hidden = $("#bankbundle_operation_category");
+                        var elt = $("#bankbundle_recurrence_category_text");
+                        var elt_hidden = $("#bankbundle_recurrence_category");
                         var value = elt.getSelectedItemData().id;
                         elt_hidden.val(value);
                     },
                     onLoadEvent: function () {
-                        var elt_hidden = $("#bankbundle_operation_category");
+                        var elt_hidden = $("#bankbundle_recurrence_category");
                         elt_hidden.val("");
                     },
 
@@ -48,20 +48,20 @@
                 },
                 theme: "square"
             };
-            $("#bankbundle_operation_category_text").easyAutocomplete(options_category);
+            $("#bankbundle_recurrence_category_text").easyAutocomplete(options_category);
 
             var options_tiers = {
                 data: {{ render(controller('BankBundle:OperationTiers:jsonList')) }},
                 getValue: "label",
                 list: {
                     onChooseEvent: function () {
-                        var elt = $("#bankbundle_operation_category_text");
-                        var elt_hidden = $("#bankbundle_operation_category");
+                        var elt = $("#bankbundle_recurrence_category_text");
+                        var elt_hidden = $("#bankbundle_recurrence_category");
                         var value = elt.getSelectedItemData().id;
                         elt_hidden.val(value);
                     },
                     onLoadEvent: function () {
-                        var elt_hidden = $("#bankbundle_operation_category");
+                        var elt_hidden = $("#bankbundle_recurrence_category");
                         elt_hidden.val("");
                     },
 
@@ -72,7 +72,7 @@
                 theme: "square"
             };
 
-            $("#bankbundle_operation_tiers_text").easyAutocomplete(options_tiers);
+            $("#bankbundle_recurrence_tiers_text").easyAutocomplete(options_tiers);
         });
     </script>
 
