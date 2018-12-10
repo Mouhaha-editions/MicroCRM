@@ -52,6 +52,7 @@ class OperationController extends Controller
 
         $form = $form->getForm();
         $form->handleRequest($request);
+        $start = $form->get('startDate')->getData();
         $end = $form->get('endDate')->getData();
 
         $this->get('bank.account')->generateRecurrencesForAccount($account, $end);
@@ -61,7 +62,10 @@ class OperationController extends Controller
         $qb = $em->getRepository('BankBundle:Operation')->createQueryBuilder('o')
             ->where('o.account = :account')
             ->andWhere('o.deleted = :false')
+            ->andWhere('o.date BETWEEN :start AND :end')
             ->setParameter('false', false)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
             ->setParameter('account', $account);
 
         $pagination = $this->get('pkshetlie.pagination')->process($qb, $request);
