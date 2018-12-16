@@ -66,7 +66,8 @@ class OperationController extends Controller
             ->setParameter('false', false)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->setParameter('account', $account);
+            ->setParameter('account', $account)
+        ->orderBy('o.date','DESC');
 
         $pagination = $this->get('pkshetlie.pagination')->process($qb, $request);
 

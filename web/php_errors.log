@@ -34,3 +34,4 @@ Stack trace:
 [06-Dec-2018 23:16:15 Europe/Paris] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 262144 bytes) in Unknown on line 0
 [06-Dec-2018 23:16:15 Europe/Paris] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 262144 bytes) in Unknown on line 0
 [06-Dec-2018 23:16:15 Europe/Paris] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 262144 bytes) in Unknown on line 0
+[11-Dec-2018 22:22:00 Europe/Paris] PHP Fatal error:  Maximum execution time of 20 seconds exceeded in F:\var\www\dev_project\var\cache\dev\ContainerSi0xuie\getFosUser_Security_InteractiveLoginListenerService.php on line 8
