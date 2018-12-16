@@ -90,8 +90,11 @@ class RecurrenceController extends Controller
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', "Récurrence enregistrée");
-
-            return $this->redirectToRoute('bank_operation_index', ['id' => $recurrence->getAccount()->getId()]);
+            if ($request->get('add_one', false)) {
+                return $this->redirectToRoute('bank_recurrence_new', ['id' => $recurrence->getAccount()->getId()]);
+            } else {
+                return $this->redirectToRoute('bank_operation_index', ['id' => $recurrence->getAccount()->getId()]);
+            }
         }
 
         return $this->render('@Bank/Recurrence/edit.html.twig', array(
@@ -120,9 +123,9 @@ class RecurrenceController extends Controller
             $this->addFlash('success', "Récurrence supprimée");
         } catch (\Exception $e) {
             $this->addFlash('danger', "Erreur");
-VarDumper::dump($e);die;
+            VarDumper::dump($e);
+            die;
         }
-
         return $this->redirectToRoute('bank_operation_index', ['id' => $account_id]);
     }
 
