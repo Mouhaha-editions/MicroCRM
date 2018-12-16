@@ -32,7 +32,7 @@ class OperationController extends Controller
             'startDate' => (new \DateTime())->modify('-1 months'),
             'endDate' => (new \DateTime())->modify('+1 months'),
         ];
-        $form = $this->createFormBuilder($data,['method'=>'get']);
+        $form = $this->createFormBuilder($data, ['method' => 'get']);
         $form->add('startDate', DateType::class, [
             'format' => DateType::HTML5_FORMAT,
             'widget' => 'single_text',
@@ -67,7 +67,7 @@ class OperationController extends Controller
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->setParameter('account', $account)
-        ->orderBy('o.date','DESC');
+            ->orderBy('o.date', 'DESC');
 
         $pagination = $this->get('pkshetlie.pagination')->process($qb, $request);
 
@@ -164,8 +164,11 @@ class OperationController extends Controller
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', "Operation enregistrée");
-
-            return $this->redirectToRoute('bank_operation_index', ['id' => $operation->getAccount()->getId()]);
+            if ($request->get('add_one', false)) {
+                return $this->redirectToRoute('bank_operation_new', ['id' => $operation->getAccount()->getId()]);
+            } else {
+                return $this->redirectToRoute('bank_operation_index', ['id' => $operation->getAccount()->getId()]);
+            }
         }
 
         return $this->render('@Bank/Operation/edit.html.twig', array(
