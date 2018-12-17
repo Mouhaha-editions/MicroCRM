@@ -20,7 +20,6 @@ class AccountController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $accounts = $em->getRepository('BankBundle:Account')->findAll();
 
         return $this->render('@Bank/Account/index.html.twig', array(
