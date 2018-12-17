@@ -28,6 +28,31 @@ class AccountService
         $this->em = $entityManager;
     }
 
+    public function budgetMethod(Operation $operation, $delete = false)
+    {
+        /** @var Operation $budget */
+        $budget = $this->em->getRepository('BankBundle:Operation')
+            ->createQueryBuilder('o')
+            ->where('o.category = :categorie')
+            ->andWhere('o.date >= :date')
+            ->andWhere('o.budget = :true')
+            ->setParameter('categorie', $operation->getCategory())
+            ->setParameter('date', $operation->getDate())
+            ->setParameter('true', true)
+            ->orderBy('o.date', 'ASC')
+            ->setMaxResults(1)
+            ->setFirstResult(0)
+            ->getQuery()->getOneOrNullResult();
+
+        if ($budget != null) {
+            if ($delete) {
+                $budget->setAmount($budget->getAmount() + $operation->getAmount());
+            } else if ($operation->getId() == null) {
+                $budget->setAmount($budget->getAmount() - $operation->getAmount());
+            }
+        }
+    }
+
     /**
      * @param Account $account
      * @return mixed
@@ -40,6 +65,7 @@ class AccountService
             ->select('SUM(o.amount)')
             ->where('o.pointed = :true')
             ->andWhere('o.account = :account')
+            ->andWhere('(o.budget = :false OR o.amount < 0)')
             ->andWhere('o.deleted = :false')
             ->setParameter('account', $account)
             ->setParameter('true', true)
@@ -63,6 +89,7 @@ class AccountService
             ->select('SUM(o.amount)')
             ->where('o.date <= :date')
             ->andWhere('o.account = :account')
+            ->andWhere('(o.budget = :false OR o.amount < 0)')
             ->andWhere('o.deleted = :false')
             ->setParameter('account', $account)
             ->setParameter('date', $dateTime)
@@ -72,13 +99,29 @@ class AccountService
             ->getQuery()->getOneOrNullResult();
         return array_pop($count);
     }
+
     public function generateRecurrencesForAccount(Account $account, \DateTime $to)
     {
-        foreach ($account->getRecurrences() AS $recurrence){
+        foreach ($account->getRecurrences() AS $recurrence) {
             $this->generateRecurrence($recurrence, $to);
         }
     }
 
+    public function updateRecurrences(Recurrence $recurrence)
+    {
+        foreach ($recurrence->getOperations() AS $operation) {
+            if (!$operation->getPointed()) {
+                $operation->setTiers($recurrence->getTiers());
+                $operation->setCategory($recurrence->getCategory());
+                $operation->setLabel($recurrence->getLabel());
+                $operation->setAccount($recurrence->getAccount());
+                $operation->setRecurrence($recurrence);
+                $operation->setAmount($recurrence->getAmount());
+                $operation->setBudget($recurrence->getBudget());
+                $this->em->flush();
+            }
+        }
+    }
 
     public function generateRecurrence(Recurrence $recurrence, \DateTime $to)
     {
@@ -97,8 +140,8 @@ class AccountService
         }
         $start = clone $recurrence->getStartDate();
         $end = clone $to;
-        while ($start <= $end ) {
-            if($recurrence->getEndDate() != null && $start > $recurrence->getEndDate() ){
+        while ($start <= $end) {
+            if ($recurrence->getEndDate() != null && $start > $recurrence->getEndDate()) {
                 break;
             }
             $operation = $this->em->getRepository('BankBundle:Operation')
@@ -116,6 +159,7 @@ class AccountService
                 $operation->setAccount($recurrence->getAccount());
                 $operation->setRecurrence($recurrence);
                 $operation->setAmount($recurrence->getAmount());
+                $operation->setBudget($recurrence->getBudget());
                 $operation->setDate(clone $start);
                 $this->em->persist($operation);
                 $this->em->flush();

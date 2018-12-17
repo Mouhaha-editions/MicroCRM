@@ -93,6 +93,13 @@ class Recurrence
     private $tiers;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_budget", type="boolean", nullable=false)
+     */
+    private $budget = false;
+
+    /**
      * @var Operation[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="BankBundle\Entity\Operation",mappedBy="recurrence")
@@ -364,5 +371,29 @@ class Recurrence
     public function getOperations()
     {
         return $this->operations;
+    }
+
+    /**
+     * Set budget.
+     *
+     * @param bool $budget
+     *
+     * @return Recurrence
+     */
+    public function setBudget($budget)
+    {
+        $this->budget = $budget;
+
+        return $this;
+    }
+
+    /**
+     * Get budget.
+     *
+     * @return bool
+     */
+    public function getBudget()
+    {
+        return $this->budget;
     }
 }

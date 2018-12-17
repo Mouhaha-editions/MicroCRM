@@ -85,6 +85,9 @@ class RecurrenceController extends Controller
             $recurrence->setTiers($tiers_entity);
             $tiers_entity->addRecurrence($recurrence);
 
+            if ($recurrence->getId() !== null) {
+                $this->get('bank.account')->updateRecurrences($recurrence);
+            }
 
             $this->getDoctrine()->getManager()->persist($recurrence);
             $this->getDoctrine()->getManager()->flush();

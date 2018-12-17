@@ -107,6 +107,7 @@ class OperationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $operation->setPointed(!$operation->getPointed());
         $em->flush();
+
         return $this->redirectToRoute('bank_operation_index', ['id' => $operation->getAccount()->getId()]);
     }
 
@@ -118,6 +119,7 @@ class OperationController extends Controller
      */
     public function editAction(Request $request, Operation $operation)
     {
+        $pointed = $operation->getPointed();
         $form = $this->createForm(OperationType::class, $operation);
         $form->get('category')->setData($operation->getCategory() != null ? $operation->getCategory()->getId() : '');
         $form->get('category_text')->setData($operation->getCategory() ? $operation->getCategory()->getLabel() : '');
@@ -148,7 +150,6 @@ class OperationController extends Controller
             if ($id_tiers != null) {
                 $tiers_entity = $this->getDoctrine()->getRepository('BankBundle:OperationTiers')->find($id_tiers);
             } else {
-
                 $tiers_entity = $this->getDoctrine()->getRepository('BankBundle:OperationTiers')->findOneBy(['label' => $tiers]);
                 if ($tiers_entity === null) {
                     $tiers_entity = new OperationTiers();
@@ -158,7 +159,7 @@ class OperationController extends Controller
             }
             $operation->setTiers($tiers_entity);
             $tiers_entity->addOperation($operation);
-
+            $this->get('bank.account')->budgetMethod($operation);
 
             $this->getDoctrine()->getManager()->persist($operation);
             $this->getDoctrine()->getManager()->flush();
@@ -186,6 +187,7 @@ class OperationController extends Controller
             } else {
                 $this->getDoctrine()->getManager()->remove($operation);
             }
+            $this->get('bank.account')->budgetMethod($operation, true);
             $this->getDoctrine()->getManager()->flush();
             $this->addFlash('success', "Operation supprimée");
         } catch (\Exception $e) {

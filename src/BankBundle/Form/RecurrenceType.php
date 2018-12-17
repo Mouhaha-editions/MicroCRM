@@ -3,6 +3,7 @@ namespace BankBundle\Form;
 
 use BankBundle\Entity\Recurrence;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -10,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\VarDumper\VarDumper;
+
 
 class RecurrenceType extends AbstractType
 {
@@ -51,8 +52,8 @@ class RecurrenceType extends AbstractType
                 'attr' => ['placeholder' => "recurrence.placeholder.endDate"],
                 'label' => 'recurrence.label.endDate'
             ])
-
-            ->add('amount', null, ['label'=>'recurrence.label.amount'])
+            ->add('amount', TextType::class, ['label'=>'recurrence.label.amount'])
+            ->add('budget', CheckboxType::class, ['label'=>'recurrence.label.budget'])
         ;
     }
 

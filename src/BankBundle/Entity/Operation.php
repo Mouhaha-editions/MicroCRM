@@ -61,6 +61,13 @@ class Operation
     private $pointed = false;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_budget", type="boolean", nullable=false)
+     */
+    private $budget = false;
+
+    /**
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="BankBundle\Entity\Account",inversedBy="operations")
@@ -142,7 +149,7 @@ class Operation
     /**
      * Get amount.
      *
-     * @return string
+     * @return double
      */
     public function getAmount()
     {
@@ -339,5 +346,29 @@ class Operation
     public function getDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set budget.
+     *
+     * @param bool $budget
+     *
+     * @return Operation
+     */
+    public function setBudget($budget)
+    {
+        $this->budget = $budget;
+
+        return $this;
+    }
+
+    /**
+     * Get budget.
+     *
+     * @return bool
+     */
+    public function getBudget()
+    {
+        return $this->budget;
     }
 }

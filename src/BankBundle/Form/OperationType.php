@@ -32,7 +32,9 @@ class OperationType extends AbstractType
             ->add('tiers',HiddenType::class,['mapped'=>false])
             ->add('referenceCheque')
             ->add('amount')
-            ->add('pointed');
+            ->add('pointed')
+            ->add('budget')
+        ;
     }
 
     /**

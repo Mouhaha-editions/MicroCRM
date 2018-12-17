@@ -8,3 +8,4 @@ recurrence:
     amount: Montant
     startDate: Du
     endDate: Au
+    budget: 'Est un budget ?'
