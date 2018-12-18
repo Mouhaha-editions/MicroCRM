@@ -87,16 +87,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="{% if app.request.get('_route') starts with 'bank_' %}active{% endif %}">
-                                <a><i class="fa fa-bank"></i> Banque <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu {% if app.request.get('_route') starts with 'bank_account' %}active{% endif %}">
-                                    <li {% if app.request.get('_route') starts with 'bank_account_index' %}class="active"{% endif %}>
-                                        <a href="{{ url('bank_account_index') }}">Mes comptes</a></li>
-                                    {#<li {% if app.request.get('_route') starts with 'account_payment_new' %}class="active"{% endif %}>#}
-                                        {#<a href="{{ url('account_payment_new') }}">Ajouter paiement</a>#}
-                                    {#</li>#}
-                                </ul>
-                            </li>
+
                             <li class="{% if app.request.get('_route') starts with 'changelog' %}active{% endif %}">
                                 <a><i class="fa fa-cogs"></i>Micro CRM <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu {% if app.request.get('_route') starts with 'changelog' %}active{% endif %}">
@@ -105,10 +96,12 @@
                                                 href="{{ url('changelog') }}">
                                             <i class="fa fa-fw fa-code-fork"></i><span>{{ service_version.prod }}</span>
                                         </a></li>
-                                    <li><a target="_blank"
-                                           href="https://github.com/pkshetlie/microCRM/issues">
+                                    <li>
+                                        <a target="_blank"
+                                           href="https://github.com/Mouhaha-editions/MicroCRM/issues">
                                             <i class="fa fa-fw fa-github"></i><span>GitHub (tickets/bugs)</span>
-                                        </a></li>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
