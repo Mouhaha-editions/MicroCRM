@@ -204,6 +204,7 @@ class CrmController extends ControllerWithSettings
             $templateProcessor->setValue('Facture.Reference', $salesDocument->getChrono());
             $templateProcessor->setValue('Facture.Date', $salesDocument->getDateStr());
             $templateProcessor->setValue('Facture.TotalTtc', number_format($salesDocument->getTotalTTC(), 2, ',', ' '));
+            $templateProcessor->setValue('Facture.TotalTva', number_format($salesDocument->getTotalTTC()-$salesDocument->getTotalHT(), 2, ',', ' '));
             $templateProcessor->setValue('Facture.TotalHt', number_format($salesDocument->getTotalHT(), 2, ',', ' '));
 
             /**
@@ -211,14 +212,35 @@ class CrmController extends ControllerWithSettings
              * @var SalesDocumentDetail $detail
              */
             $templateProcessor->cloneRow('Facture.Detail.Label', $salesDocument->getDetails()->count());
+            $taxes = [];
+
             foreach ($salesDocument->getDetails() AS $i => $detail) {
+                $tva = number_format($detail->getTaxes(), 2, ',', ' ');
+                if (!isset($taxes[$tva])) {
+                    $taxes[$tva] = $detail->getTotalAmountTtc() - $detail->getTotalAmountHt();
+                } else {
+                    $taxes[$tva] += $detail->getTotalAmountTtc() - $detail->getTotalAmountHt();
+                }
                 $templateProcessor->setValue('Facture.Detail.Label#' . ($i + 1), $detail->getLabel());
                 $templateProcessor->setValue('Facture.Detail.Description#' . ($i + 1), $detail->getDescription());
                 $templateProcessor->setValue('Facture.Detail.Quantity#' . ($i + 1), $detail->getQuantity());
                 $templateProcessor->setValue('Facture.Detail.UnitPriceHt#' . ($i + 1), number_format($detail->getUnitAmountHt(), 2, ',', ' '));
                 $templateProcessor->setValue('Facture.Detail.TotalPriceHt#' . ($i + 1), number_format($detail->getTotalAmountHt(), 2, ',', ' '));
-                $templateProcessor->setValue('Facture.Detail.TotalPriceTTC#' . ($i + 1), number_format($detail->getTotalAmountTtc(), 2, ',', ' '));
+                $templateProcessor->setValue('Facture.Detail.Taxe#' . ($i + 1), $tva);
+                $templateProcessor->setValue('Facture.Detail.TotalPriceTtc#' . ($i + 1), number_format($detail->getTotalAmountTtc(), 2, ',', ' '));
             }
+
+            $templateProcessor->cloneRow('Taxes.Percent', count($taxes));
+            $i = 0;
+            ksort($taxes);
+
+            foreach ($taxes AS $prct => $tx) {
+                $templateProcessor->setValue('Taxes.Percent#' . ($i +1 ), $prct);
+                $templateProcessor->setValue('Taxes.Amount#' . ($i+1 ), number_format($tx, 2, ',', ' '));
+                $i++;
+            }
+
+
             $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.docx';
             $templateProcessor->saveAs($file);
 
@@ -231,9 +253,8 @@ class CrmController extends ControllerWithSettings
                 $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($temp, 'PDF');
                 $xmlWriter->save($file, TRUE);
             }
-        } catch (CopyFileException $e) {
-        } catch (CreateTemporaryFileException $e) {
         } catch (Exception $e) {
+            VarDumper::dump($e);die;
         }
         $response = new BinaryFileResponse($file);
         $response->setContentDisposition(
@@ -271,7 +292,7 @@ class CrmController extends ControllerWithSettings
         $form = $form->getForm();
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
         }
     }

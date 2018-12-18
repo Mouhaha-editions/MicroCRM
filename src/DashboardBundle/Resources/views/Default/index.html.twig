@@ -9,7 +9,7 @@
             <span class="count_bottom">Mais ca c'était avant ...</span>
         </div>
 
-        {% set progression = (ca_this_year / ca_last_year * 100) %}
+        {% set progression = ca_last_year != 0 ? (ca_this_year / ca_last_year * 100) : 100 %}
         {% set color = progression <=0 ? 'red':'green' %}
         {% set sort = progression <=0 ? 'desc':'asc' %}
         <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -63,6 +63,7 @@
                                 <div class="sp-widget__list">
                                     {% for rd in rdv %}
                                         <div class="sp-widget__item">
+                                            <hr/>
                                             <div class="sp-widget__user"><span
                                                         class="sp-widget__date">{{ rd.salesDocument.customer.fullName }}
                                                     , {{ rd.date.format('H:i') }}</span>
@@ -72,7 +73,6 @@
                                                 <br/>
                                                 {{ rd.description }}
                                             </div>
-                                            <hr/>
                                         </div>
                                     {% endfor %}
                                 </div>
