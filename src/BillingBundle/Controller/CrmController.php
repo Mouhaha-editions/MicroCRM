@@ -229,21 +229,16 @@ class CrmController extends ControllerWithSettings
                 $templateProcessor->setValue('Facture.Detail.Taxe#' . ($i + 1), $tva);
                 $templateProcessor->setValue('Facture.Detail.TotalPriceTtc#' . ($i + 1), number_format($detail->getTotalAmountTtc(), 2, ',', ' '));
             }
-
             $templateProcessor->cloneRow('Taxes.Percent', count($taxes));
             $i = 0;
             ksort($taxes);
-
             foreach ($taxes AS $prct => $tx) {
                 $templateProcessor->setValue('Taxes.Percent#' . ($i +1 ), $prct);
                 $templateProcessor->setValue('Taxes.Amount#' . ($i+1 ), number_format($tx, 2, ',', ' '));
                 $i++;
             }
-
-
             $file = $dir . '/src/BillingBundle/Resources/factures/' . $salesDocument->getChrono() . '.docx';
             $templateProcessor->saveAs($file);
-
             if ($pdf) {
                 $docxfile = $file;
                 \PhpOffice\PhpWord\Settings::setPdfRendererPath($dir . '/vendor/dompdf/dompdf/src');
