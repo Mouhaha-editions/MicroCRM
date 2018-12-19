@@ -38,10 +38,10 @@
         <div class="col-md-12">
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}
-                   {{ 'billing_bundle.title_sales_document_details'|trans }}
+                    {{ 'billing_bundle.title_sales_document_details'|trans }}
                 {% endblock %}
                 {% block panel_button %}
-            <a href="#" data-copy-form=".table-prototype" data-before="tr:last" class="pull-right" id="addLine">+
+                    <a href="#" data-copy-form=".table-prototype" data-before="tr:last" class="pull-right" id="addLine">+
                         Ajouter une
                         ligne</a>
                 {% endblock %}
@@ -88,8 +88,12 @@
     <script>
         var updateTotal = function (t) {
             var line = getFamily(t);
-            line.obj.totalAmountTtc.val((line.val.unitAmountHt * line.val.quantity * (1 + line.val.taxes / 100)).toFixed(2));
-            line.obj.totalAmountTtc.trigger('change');
+            if (t.is(line.obj.totalAmountTtc)) {
+                line.obj.unitAmountHt.val((line.val.totalAmountTtc / line.val.quantity / (1 + (line.val.taxes / 100))).toFixed(2));
+            } else {
+                line.obj.totalAmountTtc.val((line.val.unitAmountHt * line.val.quantity * (1 + line.val.taxes / 100)).toFixed(2));
+                line.obj.totalAmountTtc.trigger('change');
+            }
         };
 
         var getFamily = function (t) {
@@ -119,13 +123,16 @@
             };
         };
         $(function () {
-
-
             $(document).on('change', '.form_totalAmountTtc ', function () {
+                $(this).val(parseFloat($(this).val()).toFixed(2))
+                $(this).trigger('update');
+            });
+            $(document).on('update', '.form_totalAmountTtc ', function () {
                 let total = 0;
                 let totalQt = 0;
                 $('.form_totalAmountTtc').each(function () {
                     total += parseFloat($(this).val());
+
                 });
                 $('.form_quantity').each(function () {
                     totalQt += parseFloat($(this).val());
@@ -134,14 +141,14 @@
                 $('.totalTTC').html(total.toFixed(2) + " &euro;");
                 $('.totalQuantity').html(totalQt);
             });
-            $('.form_totalAmountTtc ').trigger('change');
+            $('.form_totalAmountTtc ').trigger('update');
             $(document).on('keyup', '.form_unitAmountHt', function () {
                 line = getFamily($(this));
                 if (line.val.quantity === 0 && parseInt($(this).val()) !== 0) {
                     line.obj.quantity.val(1);
                 }
             });
-            $(document).on('keyup', '.form_unitAmountHt, .form_quantity, .form_taxes, .form_totalAmountTtc ', function () {
+            $(document).on('keyup', '.form_unitAmountHt, .form_quantity, .form_taxes, .form_totalAmountTtc, .form_totalAmountTtc ', function () {
                 updateTotal($(this));
             });
             var products = [];

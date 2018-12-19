@@ -97,7 +97,7 @@ class SalesDocumentDetailType extends AbstractType
                 'label' => 'sales_document_detail.label.totalAmountTtc',
                 'attr' => [
                     'class' => 'form_totalAmountTtc input-sm',
-                    'readonly' => 'readonly',
+//                    'readonly' => 'readonly',
 //                    'data-bind' => 'value: totalLine()',
                 ]
             ])//            ->add('Ajouter', SubmitType::class)
