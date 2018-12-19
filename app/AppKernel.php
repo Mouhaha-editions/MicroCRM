@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Pkshetlie\PaginationBundle\PaginationBundle(),
             new Pkshetlie\SettingsBundle\SettingsBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new BOMO\IcalBundle\BOMOIcalBundle(),
 
             new CustomerBundle\CustomerBundle(),
             new DashboardBundle\DashboardBundle(),

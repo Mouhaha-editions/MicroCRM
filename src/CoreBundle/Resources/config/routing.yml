@@ -1,3 +1,7 @@
 changelog:
   path: /changelog
   defaults: { _controller: "CoreBundle:ChangeLog:index" }
+
+ical:
+  path: /ical
+  defaults: { _controller: "CoreBundle:ICal:index" }

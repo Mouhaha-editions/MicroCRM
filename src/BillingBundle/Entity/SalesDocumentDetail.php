@@ -1,8 +1,10 @@
 <?php
+
 namespace BillingBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  *
  *
@@ -420,6 +422,15 @@ class SalesDocumentDetail
      */
     public function getDuration()
     {
-        return $this->duration;
+        return $this->duration != null ? $this->duration : 0;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getEndDate()
+    {
+        $date = clone $this->getDate();
+        return $date->modify('+' . $this->getDuration() . " minutes");
     }
 }

@@ -21,6 +21,7 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "bomo/ical-bundle": "^1.0",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "dompdf/dompdf": "^0.8.2",
