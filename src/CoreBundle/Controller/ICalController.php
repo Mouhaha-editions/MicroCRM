@@ -30,10 +30,9 @@ class ICalController extends Controller
             $event
                 ->setStartDate($detail->getDate())
                 ->setEndDate($detail->getEndDate())
-                ->setName($detail->getLabel())
-                ->setDescription($detail->getDescription())
-                ->setAttendee('pierrick.pobelle@gmail.com')
-                ->setAttendee($detail->getSalesDocument()->getCustomer()->getFullName());
+                ->setName($detail->getSalesDocument()->getCustomer()->getFullName())
+                ->setDescription($detail->getLabel()."<br/>".$detail->getDescription())
+               ;
         }
         $calStr = $cal->returnCalendar();
 
