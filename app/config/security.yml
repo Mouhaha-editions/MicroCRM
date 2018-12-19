@@ -23,6 +23,7 @@ security:
             anonymous:    true
 
     access_control:
+    - { path: ^/ical, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/register, role: ROLE_ADMIN }
     - { path: ^/resetting, role: ROLE_ADMIN }
