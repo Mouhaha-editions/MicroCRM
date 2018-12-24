@@ -267,10 +267,15 @@ class CrmController extends ControllerWithSettings
 
     public function deleteAction(Request $request, SalesDocument $salesDocument = null)
     {
+        if($salesDocument->isFacture() || $salesDocument->isAvoir()){
+            $this->addFlash('danger', 'Il est interdit de supprimer une facture ou un avoir.');
+            return $this->redirectToRoute('crm_billing_salesdocument_index');
+        }
         foreach ($salesDocument->getDetails() AS $detail) {
             $detail->setSalesDocument(null);
             $this->getDoctrine()->getManager()->remove($detail);
         }
+        $salesDocument->setCustomer(null);
         $this->getDoctrine()->getManager()->remove($salesDocument);
 
         $this->getDoctrine()->getManager()->flush($salesDocument);
