@@ -5,7 +5,8 @@ billing_bundle:
   title_sales_document_facultatif: 'Facultatif'
   title_payment_edit_add: 'Ajouter/Modifier un paiement'
   title_payment_explain: 'Explications'
-
+prestation:
+  customer_text: Client
 payment:
   placeholder:
     amount: en €, pas en patates
@@ -48,6 +49,11 @@ sales_document_detail:
     description:  'Description'
     reference:  'Référence'
     duration:  'Durée'
+    quantity:  'Quantité'
+    date:  'Date & heure'
+    unitAmountHt:  'Prix uni. HT'
+    taxes:  'T.V.A (%)'
+    totalAmountTtc:  'Total TTC'
   placeholder:
     label: 'Libellé'
     description:  'Description'

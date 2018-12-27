@@ -106,7 +106,9 @@ class CustomerController extends Controller
 
     /**
      * Displays a form to edit an existing customer entity.
-     *
+     * @param Request $request
+     * @param Customer $customer
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function editAction(Request $request, Customer $customer)
     {

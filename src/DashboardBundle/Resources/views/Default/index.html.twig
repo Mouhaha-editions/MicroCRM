@@ -33,15 +33,32 @@
         <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
             <span class="count_top"><i
                         class="fa fa-bank"></i> Compte en banque (à ce jour)</span>
-            <div class="count {{ color }}">{{ (service_settings.get('mon_compte')/100)|number_format(2,',',' ') }} &euro;</div>
+            <div class="count {{ color }}">{{ (service_settings.get('mon_compte')/100)|number_format(2,',',' ') }}
+                &euro;
+            </div>
             <span class="count_bottom">On est riche ! ou pas ...</span>
         </div>
 
     </div>
     <div class="row">
 
+        <div class="col-md-4 col-sm-12 col-xs-12">
+            {% embed 'embeded/panel.html.twig' %}
+                {% block panel_title %}Ajouter un R.D.V <small>"expérimental"</small>
+                {% endblock %}
+                {% block panel_body %}
+                    {{ form_start(form_rdv) }}
+                    {{ form_row(form_rdv.customer) }}
+                    {{ form_row(form_rdv.customer_text) }}
+                    <a href="#" class="btn btn-default btn-block add-product"><i class="fa fa-cubes"></i> produits enregistrés</a>
+                    {{ form_widget(form_rdv.salesDocumentDetail) }}
+                    <button type="submit" class="btn btn-primary pull-right">Enregistrer</button>
+                    {{ form_end(form_rdv) }}
 
-        <div class="col-md-4">
+                {% endblock %}
+            {% endembed %}
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}R.D.V du jour
                 {% endblock %}
@@ -82,7 +99,7 @@
                 {% endblock %}
             {% endembed %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-sm-12 col-xs-12">
 
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}R.D.V de demain
@@ -123,7 +140,7 @@
                 {% endblock %}
             {% endembed %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-sm-12 col-xs-12">
 
             {% embed 'embeded/panel.html.twig' %}
                 {% block panel_title %}R.D.V  à venir
@@ -166,5 +183,159 @@
         </div>
 
     </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('vendor/EasyAutocomplete/dist/easy-autocomplete.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/EasyAutocomplete/dist/easy-autocomplete.themes.min.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js') }}"></script>
+    <script>
+        $(function () {
+            var options_category = {
+                data: {{ render(controller('CustomerBundle:Resources:jsonList')) }},
+                getValue: 'label',
+                list: {
+                    onChooseEvent: function () {
+                        var elt = $("#form_customer_text");
+                        var elt_hidden = $("#form_customer");
+                        var value = elt.getSelectedItemData().id;
+                        elt_hidden.val(value);
+                    },
+                    onLoadEvent: function () {
+                        var elt_hidden = $("#form_customer");
+                        elt_hidden.val("");
+                    },
+
+                    match: {
+                        enabled: true
+                    }
+                },
+                theme: "square"
+            };
+            $("#form_customer_text").easyAutocomplete(options_category);
+        });
+    </script>
+
+    <script>
+        var updateTotal = function (t) {
+            var line = getFamily(t);
+            if (t.is(line.obj.totalAmountTtc)) {
+                line.obj.unitAmountHt.val((line.val.totalAmountTtc / line.val.quantity / (1 + (line.val.taxes / 100))).toFixed(2));
+            } else {
+                line.obj.totalAmountTtc.val((line.val.unitAmountHt * line.val.quantity * (1 + line.val.taxes / 100)).toFixed(2));
+                line.obj.totalAmountTtc.trigger('change');
+            }
+        };
+
+        var getFamily = function (t) {
+            var tr = t.closest("form");
+            return {
+                obj: {
+                    reference: tr.find('input.form_reference'),
+                    duration: tr.find('input.form_duration'),
+                    label: tr.find('input.form_label'),
+                    description: tr.find('input.form_description'),
+                    unitAmountHt: tr.find('input.form_unitAmountHt'),
+                    quantity: tr.find('input.form_quantity'),
+                    taxes: tr.find('input.form_taxes'),
+                    totalAmountTtc: tr.find('input.form_totalAmountTtc')
+                },
+                val: {
+                    label: tr.find('input.form_label').val(),
+                    reference: tr.find('input.form_reference').val(),
+                    duration: tr.find('input.form_duration').val(),
+                    description: tr.find('input.form_description').val(),
+                    unitAmountHt: parseFloat(tr.find('input.form_unitAmountHt').val()).toFixed(2),
+                    quantity: parseFloat(tr.find('input.form_quantity').val()).toFixed(2),
+                    taxes: parseFloat(tr.find('input.form_taxes').val()).toFixed(2),
+                    totalAmountTtc: parseFloat(tr.find('input.form_totalAmountTtc').val()).toFixed(2)
+                }
+            };
+        };
+        $(function () {
+            $(document).on('change', '.form_totalAmountTtc ', function () {
+                $(this).val(parseFloat($(this).val()).toFixed(2))
+                $(this).trigger('update');
+            });
+            $(document).on('update', '.form_totalAmountTtc ', function () {
+                let total = 0;
+                let totalQt = 0;
+                $('.form_totalAmountTtc').each(function () {
+                    total += parseFloat($(this).val());
+
+                });
+                $('.form_quantity').each(function () {
+                    totalQt += parseFloat($(this).val());
+                });
+
+                $('.totalTTC').html(total.toFixed(2) + " &euro;");
+                $('.totalQuantity').html(totalQt);
+            });
+            $('.form_totalAmountTtc ').trigger('update');
+            $(document).on('keyup', '.form_unitAmountHt, .form_totalAmountTtc', function () {
+                let line = getFamily($(this));
+                console.log("set default",line.obj.taxes.val() === '', 'qty:'+line.obj.quantity.val())
+                if (line.val.quantity === undefined  ||line.val.quantity === '' || line.val.quantity === 0 || parseInt($(this).val()) !== 0) {
+                    line.obj.quantity.val(1);
+                }
+                if (line.obj.taxes.val() === undefined || line.obj.taxes.val() === null || line.obj.taxes.val() === '' ) {
+                    line.obj.taxes.val({{ service_settings.get('default_taxe') }});
+                }
+            });
+            $(document).on('keyup', '.form_unitAmountHt, .form_quantity, .form_taxes, .form_totalAmountTtc, .form_totalAmountTtc ', function () {
+                updateTotal($(this));
+            });
+            var products = [];
+            var simple_products = [];
+            {% for product in products %}
+            simple_products.push('{{ product.label }} - {{ product.unitAmountHt }}€');
+            products.push({
+                reference: '{{ product.reference }}',
+                duration: '{{ product.duration }}',
+                label: '{{ product.label }}',
+                description: '{{ product.description }}',
+                unitAmountHt: '{{ product.unitAmountHt }}',
+                taxes: '{{ product.taxes }}'
+            });
+            {% endfor %}
+
+            $(document).on('click', "a.add-product", function () {
+                let t = $(this);
+                let tr = t.closest('form');
+                let reference = tr.find(".form_reference");
+                let duration = tr.find(".form_duration");
+                let label = tr.find(".form_label");
+                let description = tr.find(".form_description");
+                let quantity = tr.find(".form_quantity");
+                let unitAmountHt = tr.find(".form_unitAmountHt");
+                let taxes = tr.find(".form_taxes");
+                swal({
+                    title: "Séléctionner un produit",
+                    input: 'select',
+                    inputOptions: simple_products,
+                    showCancelButton: true,
+
+                }).then((result) => {
+                    if (result.value !== undefined) {
+                        product = products[result.value];
+                        reference.val(product.reference);
+                        duration.val(product.duration);
+                        label.val(product.label);
+                        description.val(product.description);
+                        unitAmountHt.val(product.unitAmountHt);
+                        taxes.val(product.taxes);
+                        quantity.val(1);
+                        unitAmountHt.trigger('keyup');
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
+
 
 {% endblock %}

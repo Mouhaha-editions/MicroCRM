@@ -64,7 +64,7 @@ class SalesDocumentDetailType extends AbstractType
                 'widget' => 'single_text',
                 'required' => false,
                 'attr' => ['placeholder' => "sales_document_details.placeholder.date"],
-                'label' => 'sales_document_detail.placeholder.date'
+                'label' => 'sales_document_detail.label.date'
             ])
             ->add('quantity', null, [
                 'required' => true,

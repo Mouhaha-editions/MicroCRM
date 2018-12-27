@@ -2,15 +2,60 @@
 
 namespace DashboardBundle\Controller;
 
+use BillingBundle\Entity\SalesDocument;
+use BillingBundle\Entity\SalesDocumentDetail;
+use BillingBundle\Form\SalesDocumentDetailType;
 use DateTime;
-use Doctrine\DBAL\Types\DateTimeType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\VarDumper\VarDumper;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $data = ['customer' => '', 'salesDocumentDetail' => new SalesDocumentDetail()];
+        $qb = $em->getRepository('BillingBundle:SalesDocumentProduct')
+            ->createQueryBuilder('p')
+            ->orderBy('p.label');
+        $products = $qb->getQuery()->getResult();
+
+        $form = $this->createFormBuilder($data);
+        $form
+            ->add('customer', HiddenType::class, ['mapped' => false])
+            ->add('customer_text', TextType::class, ['mapped' => false, 'required' => true, 'label' => 'prestation.customer_text'])
+            ->add('salesDocumentDetail', SalesDocumentDetailType::class, ['mapped' => false, 'required' => true, 'label' => 'Préstation']);
+
+        $form = $form->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sd = $em->getRepository('BillingBundle:SalesDocument')->createQueryBuilder('sd')
+                ->where('sd.customer = :customer')
+                ->andWhere('sd.state = :stateBDC')
+                ->setParameter('customer', $form->get('customer')->getViewData())
+                ->setParameter('stateBDC', SalesDocument::BON_COMMANDE)
+                ->setFirstResult(0)->setMaxResults(1)
+                ->getQuery()->getOneOrNullResult();
+
+            if ($sd == null) {
+                $customer = $em->getRepository('CustomerBundle:Customer')->find($form->get('customer')->getViewData());
+                $sd = new SalesDocument();
+                $sd->setState(SalesDocument::BON_COMMANDE);
+                $sd->setCustomer($customer);
+                $em->persist($sd);
+            }
+            $sdd = $form->get('salesDocumentDetail')->getData();
+            $em->persist($sdd);
+            $sd->addDetail($sdd);
+            $em->flush();
+            $this->addFlash('success', 'Prestation ajoutée');
+
+        }
         $salesDocumentDetails = $this->getDoctrine()->getRepository('BillingBundle:SalesDocumentDetail')
             ->createQueryBuilder('sd')
             ->orderBy('sd.date', 'ASC')
@@ -63,6 +108,8 @@ class DefaultController extends Controller
 
         return $this->render('@Dashboard/Default/index.html.twig', [
             'rdv' => $salesDocumentDetails,
+            'products' => $products,
+            'form_rdv' => $form->createView(),
             'rdv_demain' => $salesDocumentDetails_demain,
             'rdv_next' => $salesDocumentDetails_next,
             'ca_last_year' => $ca_last_year,
