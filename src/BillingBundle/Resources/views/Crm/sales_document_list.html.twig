@@ -39,7 +39,7 @@
                         </tr>
                         {% for facture in factures.entities %}
                             <tr>
-                                {% if facture.isFacture or facture.isAvoir %}
+                                {% if facture.isFacture or facture.isAvoir or facture.isDevis %}
                                     <td>
                                         <a class="chrono text-{% if facture.isPaid == 1 %}success{% else %}danger{% endif %}"
                                            title="{% if facture.isPaid %}Payée{% else %}Non payée{% endif %}"
@@ -69,12 +69,19 @@
                                 </td>
                                 <td>
                                     {% if not facture.isFacture  and not facture.isAvoir %}
+                                        {% if facture.isDevis %}
+                                            <a href="{{ url('crm_billing_salesdocument_document',{id:facture.id}) }}"
+                                               title="Document .docx"
+                                               class="btn btn-info btn-xs"><i
+                                                        class="fa fa-file-word-o"></i></a>
+                                        {% endif %}
                                         <a href="{{ url('crm_billing_salesdocument_edit',{id:facture.id}) }}"
                                            class="btn btn-xs btn-warning "><i
                                                     class="fa fa-edit"></i></a>
                                         <a href="{{ url('crm_billing_salesdocument_delete',{id:facture.id}) }}"
                                            class="btn btn-xs btn-danger confirm "><i
                                                     class="fa fa-trash"></i></a>
+
                                     {% else %}
                                         <a href="{{ url('crm_billing_salesdocument_document',{id:facture.id}) }}"
                                            title="Document .docx"

@@ -83,6 +83,9 @@
                                     <li {% if app.request.get('_route') starts with 'account_payment_new' %}class="active"{% endif %}>
                                         <a href="{{ url('account_payment_new') }}">Ajouter paiement</a>
                                     </li>
+                                    <li {% if app.request.get('_route') starts with 'declaration_homepage' %}class="active"{% endif %}>
+                                        <a href="{{ url('declaration_homepage') }}">Déclarations</a>
+                                    </li>
                                 </ul>
                             </li>
 

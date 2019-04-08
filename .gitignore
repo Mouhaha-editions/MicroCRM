@@ -19,3 +19,5 @@
 /.idea
 /src/BillingBundle/Resources/word/*
 /src/BillingBundle/Resources/factures/*
+/src/BillingBundle/Resources/devis/*
+/src/BillingBundle/Resources/avoirs/*

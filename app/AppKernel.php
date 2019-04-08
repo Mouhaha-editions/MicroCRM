@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new BillingBundle\BillingBundle(),
             new TemplateBundle\TemplateBundle(),
             new CoreBundle\CoreBundle(),
+            new DeclarationBundle\DeclarationBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

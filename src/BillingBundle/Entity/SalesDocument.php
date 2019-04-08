@@ -5,6 +5,7 @@ namespace BillingBundle\Entity;
 use CustomerBundle\Entity\Customer;
 use CustomerBundle\Entity\CustomerAddress;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SalesDocument
 {
+    const DEVIS = 50;
     const BON_COMMANDE = 100;
     const FACTURE = 200;
     const AVOIR = 300;
@@ -29,6 +31,7 @@ class SalesDocument
      */
     private $id;
     private static $ReverseState = [
+        self::DEVIS => "Devis",
         self::BON_COMMANDE => "Bon de commande",
         self::FACTURE => "Facture",
         self::AVOIR => "Avoir",
@@ -110,8 +113,8 @@ class SalesDocument
      */
     public function __construct()
     {
-        $this->details = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->payments = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->details = new ArrayCollection();
+        $this->payments = new ArrayCollection();
     }
 
     public function getFullNameSelect()
@@ -412,6 +415,15 @@ class SalesDocument
     public function isFacture()
     {
         return $this->getState() == self::FACTURE;
+    }
+
+    /**
+     * est-ce une facture ?
+     * @return bool
+     */
+    public function isDevis()
+    {
+        return $this->getState() == self::DEVIS;
     }
 
     /**

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="x_panel tile ">
+                <div class="x_title">
+                    <h2>Déclarations</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                    <table class="table">
+                        <tr>
+                            <th>Periode</th>
+                            <th class="text-right">C.A. à déclarer</th>
+                            <th class="text-right">Taxes sur ce C.A.</th>
+                            <th class="text-right">Benefice</th>
+                        </tr>
+                        {% for dates,facture in factures %}
+                            {% set taxes = facture is not null ? ((facture*0.237)|round + (facture*0.003)|round + (facture*0.0048)|round) : 0 %}
+                            <tr>
+                                <td>{{ dates }}</td>
+                                <td class="text-right">{{ facture is not null ? facture|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                                <td class="text-right">{{ facture is not null ? taxes|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                                <td class="text-right">{{ facture is not null ? (facture-taxes)|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="x_panel tile ">
+                <div class="x_title">
+                    <h2>Net-entreprise</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content text-center">
+                    {% if service_settings.get('net_entreprise_siret',null) is not null %}
+                    <form action="https://portail.net-entreprises.fr/auth/pass" method="post" name="form__connect" id="form__connect"
+                          novalidate="">
+                        <input name="j_siret" type="hidden" value="{{ service_settings.get('net_entreprise_siret') }}">
+                        <input name="j_nom" type="hidden" value="{{ service_settings.get('net_entreprise_nom') }}">
+                        <input name="j_prenom" type="hidden" value="{{ service_settings.get('net_entreprise_prenom') }}">
+                        <input name="j_password" type="hidden" value="{{ service_settings.get('net_entreprise_password') }}">
+
+                        <input type="submit" class="btn btn-success" value="Connexion net-entreprise"/>
+                    </form><br/>
+                    {% endif %}
+                    <a href="https://www.net-entreprises.fr/">Accès manuel</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

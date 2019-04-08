@@ -1,0 +1,3 @@
+declaration_homepage:
+    path:     /declarations
+    defaults: { _controller: DeclarationBundle:Default:index }

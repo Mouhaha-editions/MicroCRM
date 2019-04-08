@@ -1,12 +1,15 @@
 crm_billing_salesdocument_index:
     path:     /index/
     defaults: { _controller: "BillingBundle:Crm:index" }
+
 crm_billing_salesdocument_new:
     path:     /order/new
     defaults: { _controller: "BillingBundle:Crm:new" }
+
 crm_billing_salesdocument_edit:
     path:     /order/edit/{id}
     defaults: { _controller: "BillingBundle:Crm:edit" }
+
 crm_billing_salesdocument_delete:
     path:     /order/delete/{id}
     defaults: { _controller: "BillingBundle:Crm:delete" }
@@ -14,6 +17,7 @@ crm_billing_salesdocument_delete:
 crm_billing_salesdocument_document:
     path:     /order/doc/{id}
     defaults: { _controller: "BillingBundle:Crm:document", id: null }
+
 crm_billing_salesdocument_document_pdf:
     path:     /order/doc/{id}/pdf
     defaults: { _controller: "BillingBundle:Crm:documentPdf", id: null }
@@ -26,6 +30,7 @@ crm_billing_salesdocument_toogle_paid:
 crm_billing_product_new:
     path:     /products/edit/{id}
     defaults: { _controller: "BillingBundle:Crm:productCreateEdit", id: null }
+
 crm_billing_product_index:
     path:     /products/
     defaults: { _controller: "BillingBundle:Crm:products" }

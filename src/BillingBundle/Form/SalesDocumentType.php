@@ -64,6 +64,7 @@ const AUCUN = 300;
                 'required' => true,
                 'choices' => [
                     "Bon de commande" => SalesDocument::BON_COMMANDE,
+                    "Devis" => SalesDocument::DEVIS,
                     "Facture" => SalesDocument::FACTURE,
                     "Avoir" => SalesDocument::AVOIR,
                 ],

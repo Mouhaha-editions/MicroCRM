@@ -39,6 +39,10 @@ class FacturationService
             $sd->setDate($this->getDate($sd, SalesDocument::AVOIR));
             $sd->setChrono($this->getChrono($sd, SalesDocument::AVOIR));
         }
+        if ($sd->isDevis()) {
+            $sd->setDate($this->getDate($sd, SalesDocument::DEVIS));
+            $sd->setChrono($this->getChrono($sd, SalesDocument::DEVIS));
+        }
         $this->checkIfPaid($sd);
         $this->_em->flush();
     }
@@ -56,10 +60,14 @@ class FacturationService
             $template = $this->setting_service->get('facture_numerotation_template');
             $last_bill = $this->setting_service->get('facture_numerotation');
             $this->setting_service->set('facture_numerotation', $last_bill + 1);
-        } else {
+        } else if ($type == SalesDocument::AVOIR) {
             $template = $this->setting_service->get('avoir_numerotation_template');
             $last_bill = $this->setting_service->get('avoir_numerotation');
             $this->setting_service->set('avoir_numerotation', $last_bill + 1);
+        }else if ($type == SalesDocument::DEVIS) {
+            $template = $this->setting_service->get('devis_numerotation_template');
+            $last_bill = $this->setting_service->get('devis_numerotation');
+            $this->setting_service->set('devis_numerotation', $last_bill + 1);
         }
         $template = str_replace('{YEAR2}', $sd->getDate()->format('y'), $template);
         $template = str_replace('{YEAR}', $sd->getDate()->format('Y'), $template);
@@ -113,10 +121,15 @@ class FacturationService
                 throw new BillingDateException('La date de la nouvelle facture ne peut pas être enterieure a la date de la facture la plus récente');
             }
 
-        } else {
+        } else if ($type == SalesDocument::AVOIR) {
             $date = DateTime::createFromFormat('Y-m-d', $this->setting_service->get('avoir_numerotation_date'));
             if ($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')) {
                 throw new BillingDateException('La date du nouvel avoir ne peut pas être enterieure a la date de l\'avoir le plus récent');
+            }
+        } else if ($type == SalesDocument::DEVIS) {
+            $date = DateTime::createFromFormat('Y-m-d', $this->setting_service->get('devis_numerotation_date'));
+            if ($date->format('Y-m-d') > $sd->getDate()->format('Y-m-d')) {
+                throw new BillingDateException('La date du nouveau devis ne peut pas être enterieure à la date du devis le plus récent');
             }
         }
         $this->setting_service->set('facture_numerotation_date', $sd->getDate()->format('Y-m-d'));
