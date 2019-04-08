@@ -125,16 +125,13 @@ class CrmController extends ControllerWithSettings
     public function editAction(Request $request, SalesDocument $salesDocument)
     {
         $originalDetails = new ArrayCollection();
-
         // Create an ArrayCollection of the current Tag objects in the database
         foreach ($salesDocument->getDetails() as $detail) {
             $originalDetails->add($detail);
         }
         $salesDocument->setDate(new DateTime());
-
         $form = $this->createForm(SalesDocumentType::class, $salesDocument);
         $form->handleRequest($request);
-
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
@@ -149,7 +146,6 @@ class CrmController extends ControllerWithSettings
                 foreach ($salesDocument->getDetails() AS $det) {
                     $det->setSalesDocument($salesDocument);
                 }
-
 
                 try {
                     $this->get('facturation.service')->process($salesDocument);
