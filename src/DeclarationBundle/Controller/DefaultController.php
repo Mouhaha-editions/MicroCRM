@@ -22,11 +22,11 @@ class DefaultController extends ControllerWithSettings
                 ->createQueryBuilder('sd')
                 ->select('SUM(d.total_amount_ttc) AS sum')
                 ->leftJoin('sd.details','d')
-                ->where('sd.state IN (:states)')
-                ->andWhere('sd.paymentDate BETWEEN :start AND :end')
+                ->andWhere('(sd.paymentDate BETWEEN :start AND :end AND  sd.state = :facture ) OR (sd.date BETWEEN :start AND :end AND  sd.state = :bon_commande )')
                 ->setParameter('start', $date_start)
                 ->setParameter('end', $date_end)
-                ->setParameter('states', [SalesDocument::FACTURE,SalesDocument::BON_COMMANDE])
+                ->setParameter('facture', SalesDocument::FACTURE)
+                ->setParameter('bon_commande', SalesDocument::BON_COMMANDE)
 //                ->groupBy('1')
             ->getQuery()->getOneOrNullResult()['sum'];
         }
