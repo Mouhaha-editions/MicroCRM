@@ -146,7 +146,11 @@ class FacturationService
 
     public function toogleIsPaid(SalesDocument $sd)
     {
+        if(!$sd->getIsPaid()){
+            $sd->setPaymentDate(new DateTime());
+        }
         $sd->setIsPaid(!$sd->getIsPaid());
+
         $this->applyAccountAndFidelity($sd);
         $this->_em->flush();
     }

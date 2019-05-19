@@ -80,6 +80,12 @@ class SalesDocument
      */
     private $isPaid = false;
 
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="payment_date", type="datetime", nullable=true)
+     */
+    private $paymentDate;
 
     /**
      * @var SalesDocumentDetail
@@ -511,4 +517,22 @@ class SalesDocument
     {
         return $this->isPaid;
     }
+
+    /**
+     * @return DateTime
+     */
+    public function getPaymentDate()
+    {
+        return $this->paymentDate;
+    }
+
+    /**
+     * @param DateTime $paymentDate
+     */
+    public function setPaymentDate($paymentDate)
+    {
+        $this->paymentDate = $paymentDate;
+    }
+
+
 }
