@@ -23,7 +23,7 @@ class DefaultController extends ControllerWithSettings
                 ->select('SUM(d.total_amount_ttc) AS sum')
                 ->leftJoin('sd.details','d')
                 ->where('sd.state = :facture')
-                ->andWhere('sd.date BETWEEN :start AND :end')
+                ->andWhere('sd.paymentDate BETWEEN :start AND :end')
                 ->setParameter('start', $date_start)
                 ->setParameter('end', $date_end)
                 ->setParameter('facture', SalesDocument::FACTURE)
