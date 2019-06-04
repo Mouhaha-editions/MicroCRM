@@ -22,12 +22,11 @@
                             <th class="text-right">Benefice</th>
                         </tr>
                         {% for dates,facture in factures %}
-                            {% set taxes = facture is not null ? ((facture*0.237)|round + (facture*0.003)|round + (facture*0.0048)|round) : 0 %}
                             <tr>
                                 <td>{{ dates }}</td>
                                 <td class="text-right">{{ facture is not null ? facture|number_format(2,',',' ')~"€" : 'à venir' }} </td>
-                                <td class="text-right">{{ facture is not null ? taxes|number_format(2,',',' ')~"€" : 'à venir' }}</td>
-                                <td class="text-right">{{ facture is not null ? (facture-taxes)|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                                <td class="text-right">{{ taxes[dates] is not null ? taxes[dates]|round(0,'ceil')|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                                <td class="text-right">{{ facture is not null ? (facture-(taxes[dates]|round(0,'ceil')))|number_format(2,',',' ')~"€" : 'à venir' }}</td>
                             </tr>
                         {% endfor %}
                     </table>

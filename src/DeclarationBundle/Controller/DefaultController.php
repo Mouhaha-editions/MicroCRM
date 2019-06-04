@@ -12,6 +12,7 @@ class DefaultController extends ControllerWithSettings
     public function indexAction(Request $request)
     {
         $factures = [];
+        $taxes = [];
 
         $start = new \DateTime($this->getSetting('declaration_start'));
         while ($start->format('Y') < date('Y') + 1) {
@@ -29,10 +30,23 @@ class DefaultController extends ControllerWithSettings
                 ->setParameter('bon_commande', SalesDocument::BON_COMMANDE)
 //                ->groupBy('1')
             ->getQuery()->getOneOrNullResult()['sum'];
+
+            $taxes[$date_start->format('d/m/Y').'-'.$date_end->format('d/m/Y')] = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')
+                ->createQueryBuilder('sd')
+                ->select('SUM((d.total_amount_ttc* d.taxes_to_apply / 100)) AS sum')
+                ->leftJoin('sd.details','d')
+                ->andWhere('(sd.paymentDate BETWEEN :start AND :end AND  sd.state = :facture ) OR (sd.date BETWEEN :start AND :end AND  sd.state = :bon_commande )')
+                ->setParameter('start', $date_start)
+                ->setParameter('end', $date_end)
+                ->setParameter('facture', SalesDocument::FACTURE)
+                ->setParameter('bon_commande', SalesDocument::BON_COMMANDE)
+//                ->groupBy('1')
+                ->getQuery()->getOneOrNullResult()['sum'];
         }
 
         return $this->render('@Declaration/Default/index.html.twig',[
-            'factures'=>$factures
+            'factures'=>$factures,
+            'taxes'=>$taxes,
         ]);
     }
 }
