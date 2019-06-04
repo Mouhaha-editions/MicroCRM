@@ -88,10 +88,17 @@ class SalesDocumentDetailType extends AbstractType
                 'attr' => [
                     'class' => 'form_taxes input-sm',
 //                    'data-bind' => 'value: taxes, valueUpdate: "afterkeydown"',
+                ]
+            ])
+            ->add('taxesToApply', null, [
+                'required' => true,
+                'label' => 'sales_document_detail.label.taxesToApply',
+                'attr' => [
+                    'class' => 'form_taxesToApply input-sm',
+                    'placeholder' => 'sales_document_detail.placeholder.taxesToApply',
 
                 ]
             ])
-
             ->add('totalAmountTtc', null, [
                 'required' => true,
                 'label' => 'sales_document_detail.label.totalAmountTtc',

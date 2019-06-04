@@ -18,6 +18,7 @@
                         <th>Libellé</th>
                         <th style="width:15%; text-align:right;">Durée</th>
                         <th style="width:15%; text-align:right;">TVA</th>
+                        <th style="width:15%; text-align:right;">Taxes état</th>
                         <th style="width:15%; text-align:right;">Montant HT</th>
                         <th></th>
 
@@ -34,13 +35,16 @@
                             <td style="width:10%; text-align:right;">{{ product.duration|number_format(0) }}
                                 min
                             </td>
-                            <td style="width:15%; text-align:right;">{{ product.unitAmountHt|number_format(2,',',' ') }}
-                                &euro;
-                            </td>
+
                             <td style="width:10%; text-align:right;">{{ product.taxes|number_format(2,',',' ') }}
                                 %
                             </td>
-
+                            <td style="width:10%; text-align:right;">{{ product.taxesToApply|number_format(2,',',' ') }}
+                                %
+                            </td>
+                            <td style="width:15%; text-align:right;">{{ product.unitAmountHt|number_format(2,',',' ') }}
+                                &euro;
+                            </td>
                             <td style="width:10%;"><a
                                         href="{{ url('crm_billing_product_new',{id: product.id}) }}"
                                         class="btn btn-info "><i

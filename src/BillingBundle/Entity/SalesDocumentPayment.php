@@ -96,7 +96,12 @@ class SalesDocumentPayment
      *
      */
     private $salesDocument;
-
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="transaction_taxe", type="decimal",scale=2, precision=10, nullable=true)
+     */
+    private $transaction_taxe = 0;
     /**
      * Get id.
      *

@@ -22,6 +22,7 @@ sales_document_product:
       description: 'Description'
       unitAmountHt: 'Montant Unitaire (HT)'
       taxes: 'TVA'
+      taxesToApply: 'Taxes à retirer'
       duration: 'Durée'
       reference: 'Référence'
   placeholder:
@@ -29,6 +30,7 @@ sales_document_product:
     description: 'facultatif'
     unitAmountHt: ''
     taxes: '%'
+    taxesToApply: "Taxes que prend l'état sur cette prestation"
     duration: 'en minutes'
     reference: 'facultatif'
 sales_document:
@@ -53,9 +55,11 @@ sales_document_detail:
     date:  'Date & heure'
     unitAmountHt:  'Prix uni. HT'
     taxes:  'T.V.A (%)'
+    taxesToApply: 'Taxes à retirer (%)'
     totalAmountTtc:  'Total TTC'
   placeholder:
     label: 'Libellé'
     description:  'Description'
     reference:  'Référence'
+    taxesToApply: "Taxes que prend l'état sur cette prestation"
     duration:  'Durée'

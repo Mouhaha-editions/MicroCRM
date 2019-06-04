@@ -66,12 +66,22 @@ class SalesDocumentProductType extends AbstractType
 //                    'data-bind' => 'value: unitPrice, valueUpdate: "afterkeydown"',
                 ]
             ])
+
             ->add('taxes', null, [
                 'required' => true,
                 'label' => 'sales_document_product.label.taxes',
                 'attr' => [
                     'class' => 'form_taxes input-sm',
 //                    'data-bind' => 'value: taxes, valueUpdate: "afterkeydown"',
+
+                ]
+            ])
+            ->add('taxesToApply', null, [
+                'required' => true,
+                'label' => 'sales_document_detail.label.taxesToApply',
+                'attr' => [
+                    'class' => 'form_taxesToApply input-sm',
+                    'placeholder' => 'sales_document_detail.placeholder.taxesToApply',
 
                 ]
             ])

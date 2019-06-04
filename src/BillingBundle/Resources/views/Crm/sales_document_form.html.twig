@@ -107,6 +107,7 @@
                     unitAmountHt: tr.find('input.form_unitAmountHt'),
                     quantity: tr.find('input.form_quantity'),
                     taxes: tr.find('input.form_taxes'),
+                    taxesToApply: tr.find('input.form_taxesToApply'),
                     totalAmountTtc: tr.find('input.form_totalAmountTtc')
                 },
                 val: {
@@ -117,6 +118,7 @@
                     unitAmountHt: parseFloat(tr.find('input.form_unitAmountHt').val()).toFixed(2),
                     quantity: parseFloat(tr.find('input.form_quantity').val()).toFixed(2),
                     taxes: parseFloat(tr.find('input.form_taxes').val()).toFixed(2),
+                    taxesToApply: parseFloat(tr.find('input.form_taxesToApply').val()).toFixed(2),
                     totalAmountTtc: parseFloat(tr.find('input.form_totalAmountTtc').val()).toFixed(2)
                 }
             };
@@ -143,7 +145,6 @@
             $('.form_totalAmountTtc ').trigger('update');
             $(document).on('keyup', '.form_unitAmountHt, .form_totalAmountTtc', function () {
                 let line = getFamily($(this));
-                console.log("set default",line.obj.taxes.val() === '', 'qty:'+line.obj.quantity.val())
                 if (line.val.quantity === undefined  ||line.val.quantity === '' || line.val.quantity === 0 || parseInt($(this).val()) !== 0) {
                     line.obj.quantity.val(1);
                 }
@@ -164,7 +165,8 @@
                 label: '{{ product.label }}',
                 description: '{{ product.description }}',
                 unitAmountHt: '{{ product.unitAmountHt }}',
-                taxes: '{{ product.taxes }}'
+                taxes: '{{ product.taxes }}',
+                taxesToApply: '{{ product.taxesToApply }}'
             });
             {% endfor %}
 
@@ -178,6 +180,7 @@
                 var quantity = tr.find(".form_quantity");
                 var unitAmountHt = tr.find(".form_unitAmountHt");
                 var taxes = tr.find(".form_taxes");
+                var taxesToApply = tr.find(".form_taxesToApply");
                 swal({
                     title: "Séléctionner un produit",
                     input: 'select',
@@ -193,6 +196,7 @@
                         description.val(product.description);
                         unitAmountHt.val(product.unitAmountHt);
                         taxes.val(product.taxes);
+                        taxesToApply.val(product.taxesToApply);
                         quantity.val(1);
                         unitAmountHt.trigger('keyup');
                     }

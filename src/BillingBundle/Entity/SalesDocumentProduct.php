@@ -1,7 +1,9 @@
 <?php
+
 namespace BillingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  *
  *
@@ -52,6 +54,15 @@ class SalesDocumentProduct
      * @ORM\Column(name="taxes", type="decimal",scale=2, precision=10, nullable=true)
      */
     private $taxes = 20;
+
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="taxes_to_apply", type="decimal",scale=2, precision=10, nullable=true)
+     */
+
+    private $taxes_to_apply;
 
     /**
      * @var integer
@@ -183,7 +194,6 @@ class SalesDocumentProduct
     }
 
 
-
     /**
      * Set reference
      *
@@ -207,4 +217,24 @@ class SalesDocumentProduct
     {
         return $this->reference;
     }
+
+    /**
+     * @return float
+     */
+    public function getTaxesToApply()
+    {
+        return $this->taxes_to_apply;
+    }
+
+    /**
+     * @param float $taxes_to_apply
+     */
+    public function setTaxesToApply($taxes_to_apply)
+    {
+        $this->taxes_to_apply = $taxes_to_apply;
+    }
+
+
+
+
 }

@@ -94,6 +94,13 @@ class SalesDocumentDetail
     private $salesDocument;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="taxes_to_apply", type="decimal",scale=2, precision=10, nullable=true)
+     */
+
+    private $taxes_to_apply;
+    /**
      * Get id.
      *
      * @return int
@@ -433,4 +440,22 @@ class SalesDocumentDetail
         $date = clone $this->getDate();
         return $date->modify('+' . $this->getDuration() . " minutes");
     }
+
+    /**
+     * @return float
+     */
+    public function getTaxesToApply()
+    {
+        return $this->taxes_to_apply;
+    }
+
+    /**
+     * @param float $taxes_to_apply
+     */
+    public function setTaxesToApply($taxes_to_apply)
+    {
+        $this->taxes_to_apply = $taxes_to_apply;
+    }
+
+
 }
