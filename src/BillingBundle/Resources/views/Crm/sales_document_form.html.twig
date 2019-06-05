@@ -106,6 +106,7 @@
                     description: tr.find('input.form_description'),
                     unitAmountHt: tr.find('input.form_unitAmountHt'),
                     quantity: tr.find('input.form_quantity'),
+                    buy_price: tr.find('input.form_buy_price'),
                     taxes: tr.find('input.form_taxes'),
                     taxesToApply: tr.find('input.form_taxesToApply'),
                     totalAmountTtc: tr.find('input.form_totalAmountTtc')
@@ -117,6 +118,7 @@
                     description: tr.find('input.form_description').val(),
                     unitAmountHt: parseFloat(tr.find('input.form_unitAmountHt').val()).toFixed(2),
                     quantity: parseFloat(tr.find('input.form_quantity').val()).toFixed(2),
+                    buy_price: parseFloat(tr.find('input.form_buy_price').val()).toFixed(2),
                     taxes: parseFloat(tr.find('input.form_taxes').val()).toFixed(2),
                     taxesToApply: parseFloat(tr.find('input.form_taxesToApply').val()).toFixed(2),
                     totalAmountTtc: parseFloat(tr.find('input.form_totalAmountTtc').val()).toFixed(2)
@@ -165,6 +167,7 @@
                 label: '{{ product.label }}',
                 description: '{{ product.description }}',
                 unitAmountHt: '{{ product.unitAmountHt }}',
+                buy_price: '{{ product.buyPrice }}',
                 taxes: '{{ product.taxes }}',
                 taxesToApply: '{{ product.taxesToApply }}'
             });
@@ -179,6 +182,7 @@
                 var description = tr.find(".form_description");
                 var quantity = tr.find(".form_quantity");
                 var unitAmountHt = tr.find(".form_unitAmountHt");
+                var buy_price = tr.find(".form_buy_price");
                 var taxes = tr.find(".form_taxes");
                 var taxesToApply = tr.find(".form_taxesToApply");
                 swal({
@@ -195,6 +199,7 @@
                         label.val(product.label);
                         description.val(product.description);
                         unitAmountHt.val(product.unitAmountHt);
+                        buy_price.val(product.buy_price);
                         taxes.val(product.taxes);
                         taxesToApply.val(product.taxesToApply);
                         quantity.val(1);

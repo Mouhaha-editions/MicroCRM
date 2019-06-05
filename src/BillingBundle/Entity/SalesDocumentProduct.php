@@ -72,6 +72,14 @@ class SalesDocumentProduct
     private $duration;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="buy_price", type="decimal",scale=2, precision=10, nullable=true)
+     */
+
+    private $buyPrice;
+
+    /**
      * Get id.
      *
      * @return int
@@ -232,6 +240,22 @@ class SalesDocumentProduct
     public function setTaxesToApply($taxes_to_apply)
     {
         $this->taxes_to_apply = $taxes_to_apply;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBuyPrice()
+    {
+        return $this->buyPrice;
+    }
+
+    /**
+     * @param float $buyPrice
+     */
+    public function setBuyPrice($buyPrice)
+    {
+        $this->buyPrice = $buyPrice;
     }
 
 

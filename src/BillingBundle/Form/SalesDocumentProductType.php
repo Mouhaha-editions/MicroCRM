@@ -78,11 +78,19 @@ class SalesDocumentProductType extends AbstractType
             ])
             ->add('taxesToApply', null, [
                 'required' => true,
-                'label' => 'sales_document_detail.label.taxesToApply',
+                'label' => 'sales_document_product.label.taxesToApply',
                 'attr' => [
                     'class' => 'form_taxesToApply input-sm',
-                    'placeholder' => 'sales_document_detail.placeholder.taxesToApply',
+                    'placeholder' => 'sales_document_product.placeholder.taxesToApply',
 
+                ]
+            ])
+            ->add('buyPrice', null, [
+                'required' => true,
+                'label' => 'sales_document_product.label.buyPrice',
+                'attr' => [
+                    'class' => 'form_buy_price input-sm',
+                    'placeholder' => 'sales_document_product.placeholder.buyPrice',
                 ]
             ])
         ;

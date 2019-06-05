@@ -10,7 +10,10 @@
     <td>{{ form_widget(form.unitAmountHt) }}
         {{ form_widget(form.taxes) }}</td>
     <td>{{ form_widget(form.quantity) }}</td>
-    <td>{{ form_widget(form.totalAmountTtc) }}</td>
+    <td>
+        {{ form_widget(form.totalAmountTtc) }}
+        {{ form_widget(form.buyPrice) }}
+    </td>
     <td style="vertical-align: middle"><a href="#" class="text-danger removeLine" data-delete-form="true" data-closest="tr" title="Retirer cette ligne"><i
                 class="fa fa-minus "></i></a></td>
 </tr>
