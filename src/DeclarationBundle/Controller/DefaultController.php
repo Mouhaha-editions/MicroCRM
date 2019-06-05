@@ -21,7 +21,9 @@ class DefaultController extends ControllerWithSettings
             $date_end = clone $start;
             $factures[$date_start->format('d/m/Y').'-'.$date_end->format('d/m/Y')] = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')
                 ->createQueryBuilder('sd')
-                ->select('SUM(d.total_amount_ttc) AS sum, d.taxes_to_apply AS taxe')
+                ->select('SUM(d.total_amount_ttc) AS sum, 
+                d.taxes_to_apply AS taxe,
+                SUM(d.buyPrice) AS cost')
                 ->leftJoin('sd.details','d')
                 ->andWhere('(sd.paymentDate BETWEEN :start AND :end AND  sd.state = :facture ) OR (sd.date BETWEEN :start AND :end AND  sd.state = :bon_commande )')
                 ->setParameter('start', $date_start)
@@ -33,8 +35,12 @@ class DefaultController extends ControllerWithSettings
 
             $taxes[$date_start->format('d/m/Y').'-'.$date_end->format('d/m/Y')] = $this->getDoctrine()->getRepository('BillingBundle:SalesDocument')
                 ->createQueryBuilder('sd')
-                ->select('SUM((d.total_amount_ttc* d.taxes_to_apply / 100)) AS sum, d.taxes_to_apply AS taxe')
+                ->select('
+                SUM((d.total_amount_ttc* d.taxes_to_apply / 100)) AS sum, 
+                SUM(d.buyPrice) AS cost,              
+                d.taxes_to_apply AS taxe')
                 ->leftJoin('sd.details','d')
+
                 ->andWhere('(sd.paymentDate BETWEEN :start AND :end AND  sd.state = :facture ) OR (sd.date BETWEEN :start AND :end AND  sd.state = :bon_commande )')
                 ->groupBy('d.taxes_to_apply')
                 ->setParameter('start', $date_start)

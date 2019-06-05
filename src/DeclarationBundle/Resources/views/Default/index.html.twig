@@ -20,6 +20,7 @@
                             <th class="text-right">Taxes état</th>
                             <th class="text-right">C.A. à déclarer</th>
                             <th class="text-right">Taxes sur ce C.A.</th>
+                            <th class="text-right">Coûts</th>
                             <th class="text-right">Benefice</th>
                         </tr>
                         {% for dates,taxes_to_apply in factures %}
@@ -27,6 +28,7 @@
                                 {% for taxe,facture in taxes_to_apply  %}
                                     {% set facture_amount = facture['sum'] %}
                                     {% set theTaxe = taxes[dates][taxe] %}
+                                    {% set theBuyPrice = theTaxe['cost'] %}
                                     {% set taxes_amount = theTaxe['sum'] %}
                                     {% set taxes_percent = facture['taxe'] %}
                                         <tr>
@@ -36,15 +38,18 @@
                                             <td class="text-right">{{ taxes_percent }}%</td>
                                             <td class="text-right">{{ facture_amount is not null ? facture_amount|number_format(2,',',' ')~"€" : 'à venir' }} </td>
                                             <td class="text-right">{{ taxes_amount is not null ? taxes_amount|round(0,'ceil')|number_format(2,',',' ')~"€" : 'à venir' }}</td>
-                                            <td class="text-right">{{ facture_amount is not null ? (facture_amount-(taxes_amount|round(0,'ceil')))|number_format(2,',',' ')~"€" : 'à venir' }}</td>
+                                            <td class="text-right">{{ theBuyPrice|round(0,'ceil')|number_format(2,',',' ')~"€" }}</td>
+                                            <td class="text-right"><span title="">{{ facture_amount is not null ? (facture_amount-(taxes_amount|round(0,'ceil'))-theBuyPrice)|number_format(2,',',' ')~"€" : 'à venir' }}</td>
                                         </tr>
                                 {% endfor %}
                             {% else %}
                                 <tr>
                                     <td>{{ dates }} <small></small></td>
-                                    <td class="text-right">Aucun document </td>
-                                    <td class="text-right">Aucun document</td>
-                                    <td class="text-right">Aucun document</td>
+                                    <td class="text-right">N.C. </td>
+                                    <td class="text-right">N.C.</td>
+                                    <td class="text-right">N.C.</td>
+                                    <td class="text-right">N.C.</td>
+                                    <td class="text-right">N.C.</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
