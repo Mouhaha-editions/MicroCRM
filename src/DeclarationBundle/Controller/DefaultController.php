@@ -15,7 +15,7 @@ class DefaultController extends ControllerWithSettings
         $taxes = [];
 
         $start = new \DateTime($this->getSetting('declaration_start'));
-        while ($start->format('Y') < date('Y') + 1) {
+        while ($start->format('Y') < date('Y') + 2) {
             $date_start = clone $start;
             $start->modify($this->getSetting('declaration_next'));
             $date_end = clone $start;
@@ -23,7 +23,7 @@ class DefaultController extends ControllerWithSettings
                 ->createQueryBuilder('sd')
                 ->select('SUM(d.total_amount_ttc) AS sum, 
                 d.taxes_to_apply AS taxe,
-                SUM(d.buyPrice) AS cost')
+                SUM(d.buyPrice*d.quantity) AS cost')
                 ->leftJoin('sd.details','d')
                 ->andWhere('(sd.paymentDate BETWEEN :start AND :end AND  sd.state = :facture ) OR (sd.date BETWEEN :start AND :end AND  sd.state = :bon_commande )')
                 ->setParameter('start', $date_start)
@@ -37,7 +37,7 @@ class DefaultController extends ControllerWithSettings
                 ->createQueryBuilder('sd')
                 ->select('
                 SUM((d.total_amount_ttc* d.taxes_to_apply / 100)) AS sum, 
-                SUM(d.buyPrice) AS cost,              
+                SUM(d.buyPrice*d.quantity) AS cost,              
                 d.taxes_to_apply AS taxe')
                 ->leftJoin('sd.details','d')
 
